@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscripción/Enajenación{% endblock %}
+
+{% block custom_css %}
+<style>
+select option[disabled] {
+    display: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    {% if alerts %}
+    <div class="container-wrapper d-flex justify-content-center align-items-center">
+        <div class="container bg-white p-4 rounded shadow">
+            <h1 class="text-center mb-4">Alertas</h1>
+            <div id="alert-container">
+            {% for alert in alerts %}
+            <div class="alert alert-danger" role="alert">
+                {{ alert }}
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <h1 class="mb-4">Inscripción/Enajenación</h1>
+    <form method="post">
+        <div class="form-group">
+            <label for="attention_number">N° Atención</label>
+            <input type="text" class="form-control" id="attention_number" name="attention_number" placeholder="Folio" readonly>
+        </div>
+        <div class="form-group">
+            <label for="cne">CNE</label>
+            <select class="form-control" id="cne" name="cne">
+                {% for cne in cnes %}
+                    {% if cne.id == selected_cne %}
+                    <option value="{{ cne.id }}" selected>{{ cne.description }}</option>
+                    {% else %}
+                    <option value="{{ cne.id }}">{{ cne.description }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3 col-sm-6">
+                <label for="region">Región</label>
+                <select class="form-control" id="region" name="region" onchange="loadCommunes(this.value)">
+                    <option value="">Selecciona una región</option>
+                    {% for region in regions %}
+                        {% if region.id == region_id %}
+                        <option value="{{ region.id }}" selected>{{ region.description }}</option>
+                        {% else %}
+                        <option value="{{ region.id }}">{{ region.description }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-3 col-sm-6">
+                <label for="commune">Comuna</label>
+                <select class="form-control" id="commune" name="commune" onchange="loadRegions(this.value)">
+                    <option value="">Selecciona una comuna</option>
+                    {% for commune in communes %}
+                        {% if commune.id == commune_id %}
+                        <option value="{{ commune.id }}" selected>{{ commune.description }}</option>
+                        {% else %}
+                        <option value="{{ commune.id }}">{{ commune.description }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>           
+            <div class="form-group col-md-3 col-sm-6">
+                <label for="block">Manzana</label>
+                <input type="text" class="form-control" id="block" name="block" value="{{ block_number if block_number else '' }}">
+            </div>
+            <div class="form-group col-md-3 col-sm-6">
+                <label for="property">Predio</label>
+                <input type="text" class="form-control" id="property" name="property" value="{{ property_number if property_number else '' }}">
+            </div>
+        </div>
+        <h2 class="mt-5">Enajenantes</h2>
+        <div id="sellers">
+        </div>
+        <button type="button" class="btn btn-primary mb-3" id="add-seller">Agregar Enajenante</button>
+        <h2 class="mt-5">Adquirentes</h2>
+        <div id="buyers">
+        </div>
+        <button type="button" class="btn btn-primary mb-3" id="add-buyer">Agregar Adquiriente</button>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="fojas">Fojas</label>
+                <input type="number" class="form-control" id="fojas" name="fojas" min="0" value="{{ pages }}">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inscription_date">Fecha Inscripción</label>
+                <input type="date" class="form-control" id="inscription_date" name="inscription_date" value="{{ current_date }}">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inscription_number">Número Inscripción</label>
+                <input type="text" class="form-control" id="inscription_number" name="inscription_number" value="{{ inscription_number }}">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script src="{{ url_for('static', filename='js/helpers/forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
+{% for seller in sellers %}
+<script>
+    addSellerBuyerElement("seller", "{{ seller[0] }}", "{{ seller[1] }}");
+</script>
+{% endfor %}
+{% for buyer in buyers %}
+<script>
+    addSellerBuyerElement("buyer", "{{ buyer[0] }}", "{{ buyer[1] }}")
+</script>
+{% endfor %}
+<script>
+    const addSellerBtn = document.getElementById('add-seller');
+    const addBuyerBtn = document.getElementById('add-buyer');
+    const addSeller = document.getElementById("sellers").children.length === 0;
+    const addBuyer = document.getElementById("buyers").children.length === 0;
+    
+    if (addSeller) addSellerBuyerElement('seller');
+
+    addSellerBtn.addEventListener('click', () => {
+        addSellerBuyerElement('seller');
+    });
+
+    if (addBuyer) addSellerBuyerElement('buyer');
+
+    addBuyerBtn.addEventListener('click', () => {
+        addSellerBuyerElement('buyer');
+    });
+</script>
+{% endblock %}
