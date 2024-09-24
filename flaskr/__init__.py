@@ -343,7 +343,7 @@ def create_app():
 
         multi_properties_objects = multi_properties_query.all()
         return render_template(
-            'property/search.html',
+            'property/index.html',
             multi_properties=multi_properties_objects,
             communes=communes_objects,
             regions=regions_objects,

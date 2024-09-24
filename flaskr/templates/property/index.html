@@ -13,7 +13,7 @@ select option[disabled] {
 {% block content %}
 
 <!-- Properties -->
-<div id="propiedades" class="flex-1 bg-white p-6">
+<div class="flex-1 bg-white p-6">
   <h2 class="text-xl font-bold mb-4">Historial propiedades</h2>
   <form method="post" action="{{ url_for('property_search') }}">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
@@ -109,13 +109,13 @@ select option[disabled] {
       </table>
     </div>
     <div class="flex justify-between items-center">
-      <div>Showing {{ multi_properties | length }} entries</div>
+      <div>Mostrando {{ multi_properties | length }} entradas</div>
       <div>
-        <label for="entries">Show</label>
+        <label for="entries">Mostrar</label>
         <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1">
           <option>10</option>
         </select>
-        entries
+        entradas
       </div>
     </div>
     <div class="mt-4 flex justify-end">
