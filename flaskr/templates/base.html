@@ -4,57 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     {% block custom_css %}{% endblock %}
 </head>
 <style>
     .content-wrapper {
         flex: 1 0 auto;
     }
+    .active {
+        background-color: #4267B2; /* A more distinct blue */
+    }
 </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ url_for('home') }}">DSV</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Formularios
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url_for('create_form') }}">Ingresar</a>
-                        <a class="dropdown-item" href="{{ url_for('get_forms') }}">Ver todos</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Propiedades
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url_for('property_search') }}">Buscar</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="content-wrapper">
-        {% block content %}{% endblock %}
+<body class="bg-[#f9f9f9]">
+  <div class="md:flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
+      <div class="mb-8">
+        <div class="text-2xl font-bold">GBR</div>
+        <div class="text-sm">Gestor de bienes raices</div>
+      </div>
+      <ul>
+        <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'property_search' %}active{% endif %}" id="propiedades-tab">
+          <i class="fa-solid fa-house p-2"></i>Propiedades
+        </li>
+        <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'get_forms' %}active{% endif %}" id="formularios-tab">
+          <i class="fa-solid fa-file-lines p-2"></i>Formularios
+        </li>
+      </ul>
     </div>
+    <!-- Mobile Menu Button -->
+    <button id="menu-button" class="block md:hidden p-4">
+      <i class="fa-solid fa-bars"></i>
+    </button>
 
-    <footer class="bg-dark text-white py-3">
-        <div class="container text-center">
-            <p>&copy; 2024 Diseño Software Verificable</p>
-        </div>
-    </footer>
+    {% block content %}{% endblock %}
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     {% block custom_js %}{% endblock %}
+    <script>
+      document.getElementById('propiedades-tab').addEventListener('click', function() {
+        window.location.href = "{{ url_for('property_search') }}";
+      });
+
+      document.getElementById('formularios-tab').addEventListener('click', function() {
+        window.location.href = "{{ url_for('get_forms') }}";
+      });
+
+      document.getElementById('menu-button').addEventListener('click', function() {
+        const sidebar = document.querySelector('.w-64');
+        sidebar.classList.toggle('hidden');
+      });
+    </script>
 </body>
 </html>

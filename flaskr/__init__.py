@@ -62,10 +62,6 @@ def create_app():
         db.reflect()
         db.create_all()
 
-    @app.route('/')
-    def home():
-        return render_template('home.html')
-
     @app.route('/forms/create', methods=('GET', 'POST'))
     def create_form():
         regions_objects = Region.query.order_by(Region.description).all()
@@ -256,7 +252,7 @@ def create_app():
             message = str(e)
         return jsonify({'status': status, 'message': message})
 
-    @app.route('/property/search', methods=['GET', 'POST'])
+    @app.route('/', methods=['GET', 'POST'])
     def property_search():
         multi_properties_query = MultiProperty.query.join(
             MultiProperty.property).join(
