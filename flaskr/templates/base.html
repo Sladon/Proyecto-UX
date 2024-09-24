@@ -29,7 +29,7 @@
         <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'property_search' %}active{% endif %}" id="propiedades-tab">
           <i class="fa-solid fa-house p-2"></i>Propiedades
         </li>
-        <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'get_forms' %}active{% endif %}" id="formularios-tab">
+        <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'forms_index' %}active{% endif %}" id="formularios-tab">
           <i class="fa-solid fa-file-lines p-2"></i>Formularios
         </li>
       </ul>
@@ -48,7 +48,7 @@
       });
 
       document.getElementById('formularios-tab').addEventListener('click', function() {
-        window.location.href = "{{ url_for('get_forms') }}";
+        window.location.href = "{{ url_for('forms_index') }}";
       });
 
       document.getElementById('menu-button').addEventListener('click', function() {

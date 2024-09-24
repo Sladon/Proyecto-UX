@@ -1,65 +1,61 @@
-{% extends 'base.html' %}
-
-{% block title %}Inscripción/Enajenación{% endblock %}
-
-{% block custom_css %}
-<style>
-select option[disabled] {
-    display: none;
-}
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h4><b>Formulario</b> #{{ form.attention_number }}</h4>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title"><b>Detalles</b></h5>
-            <ul class="list-group">
-                <li class="list-group-item"><b>CNE:</b> {{ form.cne.description }}</li>
-                <li class="list-group-item"><b>Región:</b> {{ form.property.block.commune.region.description }}</li>
-                <li class="list-group-item"><b>Comuna:</b> {{ form.property.block.commune.description }}</li>
-                <li class="list-group-item"><b>Manzana:</b> {{ form.property.block.number }}</li>
-                <li class="list-group-item"><b>Predio:</b> {{ form.property.number }}</li>
-            </ul>
-            <h5 class="mt-3"><b>Enajenantes</b></h5>
-            <ul class="list-group">
-                {% for seller in sellers %}
-                <li class="list-group-item">
-                    <div><b>RUN:</b> {{ seller.person.run }}</div>
-                    <br>
-                    {% if seller.percentage %}
-                    <div><b>% de derecho:</b> {{ seller.percentage }}</div>
-                    {% else %}
-                    <div><b>% de derecho:</b> Desconocido</div>
-                    {% endif %}
-                </li>
-                {% endfor %}
-                {% if not sellers %}
-                <li class="list-group-item">No se encontraron enajenantes</li>
-                {% endif %}
-            </ul>
-            <h5 class="mt-3"><b>Adquirentes</b></h5>
-            <ul class="list-group">
-                {% for buyer in buyers %}
-                <li class="list-group-item">
-                    <div><b>RUN:</b> {{ buyer.person.run }}</div>
-                    <br>
-                    {% if buyer.percentage %}
-                    <div><b>% de derecho:</b> {{ buyer.percentage }}</div>
-                    {% else %}
-                    <div><b>% de derecho:</b> Desconocido</div>
-                    {% endif %}
-                </li>
-                {% endfor %}
-                {% if not buyers %}
-                <li class="list-group-item">No se encontraron adquirentes</li>
-                {% endif %}
-            </ul>
-        </div>
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white rounded-lg w-3/4 md:w-1/2 p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">Formulario #{{ form_data.attention_number }}</h2>
+      <a href="{{ url_for('forms_index') }}" class="text-red-500">X</a>
     </div>
+    <div>
+      <h3 class="font-bold mb-2">Detalles</h3>
+      <div class="grid gap-4 mb-4">
+        <div class="p-4 border rounded-lg">
+          <strong>CNE:</strong> {{ form_data.cne.description }}
+        </div>
+        <div class="p-4 border rounded-lg">
+          <strong>Región:</strong> {{ form_data.property.block.commune.region.description }}
+        </div>
+        <div class="p-4 border rounded-lg">
+          <strong>Comuna:</strong> {{ form_data.property.block.commune.description }}
+        </div>
+        <div class="p-4 border rounded-lg">
+          <strong>Manzana:</strong> {{ form_data.property.block.number }}
+        </div>
+        <div class="p-4 border rounded-lg">
+          <strong>Predio:</strong> {{ form_data.property.number }}
+        </div>
+      </div>
+      </div>
+      <h3 class="font-bold mb-2">Enajenantes</h3>
+      <div class="grid gap-4 mb-4">
+        {% for seller in sellers %}
+        <div class="p-4 border rounded-lg">
+          <strong>RUN:</strong> {{ seller.person.run }}<br>
+          <strong>% de derecho:</strong> {{ seller.percentage if seller.percentage else "Desconocido" }}
+        </div>
+        {% endfor %}
+        {% if not sellers %}
+        <div class="p-4 border rounded-lg">No se encontraron enajenantes</div>
+        {% endif %}
+      </div>
+      <h3 class="font-bold mb-2">Adquirentes</h3>
+      <div class="grid gap-4">
+        {% for buyer in buyers %}
+        <div class="p-4 border rounded-lg">
+          <strong>RUN:</strong> {{ buyer.person.run }}<br>
+          <strong>% de derecho:</strong> {{ buyer.percentage if buyer.percentage else "Desconocido" }}
+        </div>
+        {% endfor %}
+        {% if not buyers %}
+        <div class="p-4 border rounded-lg">No se encontraron adquirentes</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
-{% endblock %}
+<script>
+  window.onclick = function(event) {
+    const modal = document.getElementById("modal");
+    if (event.target == modal) {
+      window.location.href = "{{ url_for('forms_index') }}";
+    }
+  };
+</script>

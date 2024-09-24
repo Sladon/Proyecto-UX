@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Mostrar Formularios{% endblock %}
+{% block title %}Registro de formularios{% endblock %}
 
 {% block custom_css %}
 <style>
@@ -8,6 +8,7 @@
         width: 100%;
         overflow-x: auto;
     }
+
     .container {
         margin-right: 0;
         margin-left: 0;
@@ -20,65 +21,77 @@
 {% block content %}
 <!-- Formularios -->
 <div class="flex-1 bg-white p-6">
-  <h2 class="text-xl font-bold mb-4">Formularios Ingresados</h2>
-  <div class="flex justify-between mb-8">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-2/3">
-      <button id="add-button" class="bg-green-500 text-white py-2 px-4 rounded-lg custom-shadow"><i class="fa-solid fa-plus p-2"></i>Agregar Formulario</button>
-      <button class="bg-blue-500 text-white py-2 px-4 rounded-lg custom-shadow"><i class="fa-solid fa-upload p-2"></i>Carga Masiva</button>
+    <h2 class="text-xl font-bold mb-4">Formularios Ingresados</h2>
+    <div class="flex justify-between mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-2/3">
+          <a href="{{ url_for('create_form') }}" class="bg-green-500 text-white py-2 px-4 rounded-lg custom-shadow">
+            <i class="fa-solid fa-plus p-2"></i>Agregar Formulario
+          </a>
+          <button class="bg-blue-500 text-white py-2 px-4 rounded-lg custom-shadow">
+              <i class="fa-solid fa-upload p-2"></i>Carga Masiva
+          </button>
+        </div>
     </div>
-  </div>
-  <!-- Table -->
-  <div class="bg-white rounded-lg shadow-md p-4">
-    <table class="w-full table-auto mb-4">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 border">N° Atención</th>
-          <th class="px-4 py-2 border">CNE</th>
-          <th class="px-4 py-2 border">Comuna</th>
-          <th class="px-4 py-2 border">Manzana</th>
-          <th class="px-4 py-2 border">Predio</th>
-          <th class="px-4 py-2 border">Fojas</th>
-          <th class="px-4 py-2 border">Fecha inscripción</th>
-          <th class="px-4 py-2 border">N° inscripción</th>
-          <th class="px-4 py-2 border">Transacciones</th>
-          <th class="px-4 py-2 border">Ver</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for form_data in forms_data %}
-        <tr>
-            <td class="px-4 py-2 border">{{ form_data.n_atencion }}</td>
-            <td class="px-4 py-2 border">{{ form_data.cne }}</td>
-            <td class="px-4 py-2 border">{{ form_data.comuna }}</td>
-            <td class="px-4 py-2 border">{{ form_data.manzana }}</td>
-            <td class="px-4 py-2 border">{{ form_data.predio }}</td>
-            <td class="px-4 py-2 border">{{ form_data.fojas }}</td>
-            <td class="px-4 py-2 border">{{ form_data.fecha_inscripcion }}</td>
-            <td class="px-4 py-2 border">{{ form_data.numero_inscripcion }}</td>
-            <td class="px-4 py-2 border">{{ form_data.transacciones }}</td>
-            <td class="px-4 py-2 border">
-              <button id="open-modal" class="bg-transparent text-black py-2 px-4 rounded-lg custom-shadow hover:bg-blue-500 hover:text-white">
-                <i class="fa-regular fa-eye"></i>
-              </button>
-            </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <div class="flex justify-between items-center">
-      <div>Mostrando {{ forms_data | length }} entradas</div>
-      <div>
-        <label for="entries">Mostrar</label>
-        <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1">
-          <option>10</option>
-        </select>
-        entradas
-      </div>
+    <!-- Table -->
+    <div class="bg-white rounded-lg shadow-md p-4">
+        <table class="w-full table-auto mb-4">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 border">N° Atención</th>
+                    <th class="px-4 py-2 border">CNE</th>
+                    <th class="px-4 py-2 border">Comuna</th>
+                    <th class="px-4 py-2 border">Manzana</th>
+                    <th class="px-4 py-2 border">Predio</th>
+                    <th class="px-4 py-2 border">Fojas</th>
+                    <th class="px-4 py-2 border">Fecha inscripción</th>
+                    <th class="px-4 py-2 border">N° inscripción</th>
+                    <th class="px-4 py-2 border">Transacciones</th>
+                    <th class="px-4 py-2 border">Ver</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form_data in forms_data %}
+                <tr>
+                    <td class="px-4 py-2 border">{{ form_data.attention_number }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.cne }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.commune }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.block }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.property }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.pages }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.inscription_date }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.inscription_number }}</td>
+                    <td class="px-4 py-2 border">{{ form_data.transactions }}</td>
+                    <td class="px-4 py-2 border">
+                      <a href="{{ url_for('forms_index', attention_number=form_data.attention_number) }}" class="bg-transparent text-black py-2 px-4 rounded-lg custom-shadow hover:bg-blue-500 hover:text-white">
+                          <i class="fa-regular fa-eye"></i>
+                      </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="flex justify-between items-center">
+            <div>Mostrando {{ forms_data|length }} entradas</div>
+            <div>
+                <label for="entries">Mostrar</label>
+                <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1">
+                    <option>10</option>
+                </select>
+                entradas
+            </div>
+        </div>
+        <div class="mt-4 flex justify-end">
+            <button class="p-2">1</button>
+            <button class="p-2">2</button>
+        </div>
     </div>
-    <div class="mt-4 flex justify-end">
-      <button class="p-2">1</button>
-      <button class="p-2">2</button>
-    </div>
-  </div>
 </div>
+
+{% if form_data %}
+   {% include 'forms/show.html' %}
+{% endif %}
+{% if cnes %}
+   {% include 'forms/create.html' %}
+{% endif %}
+
 {% endblock %}

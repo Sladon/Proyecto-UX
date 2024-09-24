@@ -62,6 +62,24 @@ def create_app():
         db.reflect()
         db.create_all()
 
+    def get_forms():
+        forms = Form.query.all()
+        forms_data = []
+        for form in forms:
+            form_data = {
+                'attention_number': form.attention_number,
+                'cne': form.cne.description,
+                'commune': form.property.block.commune.description,
+                'block': form.property.block.number,
+                'property': form.property.number,
+                'pages': form.pages,
+                'inscription_date': form.inscription_date,
+                'inscription_number': form.inscription_number,
+                'transactions': len(form.transactions)
+            }
+            forms_data.append(form_data)
+        return forms_data
+
     @app.route('/forms/create', methods=('GET', 'POST'))
     def create_form():
         regions_objects = Region.query.order_by(Region.description).all()
@@ -71,6 +89,7 @@ def create_app():
         alert_msg = MSGS["alerts"]
         missing_data = alert_msg["missing_data"]
         alerts = []
+        forms_data = get_forms()
 
         if request.method == 'POST':
             cne_id = convert_to_type(request.form['cne'], int)
@@ -149,10 +168,10 @@ def create_app():
                 )
 
                 return redirect(
-                    url_for('get_form', attention_number=form_object.attention_number))
+                    url_for('forms_index', attention_number=form_object.attention_number))
 
             return render_template(
-                'forms/create.html',
+                'forms/index.html',
                 regions=regions_objects,
                 communes=communes_objects,
                 cnes=cnes_objects,
@@ -167,37 +186,24 @@ def create_app():
                 pages=pages,
                 inscription_date=inscription_date.strftime('%Y-%m-%d'),
                 inscription_number=inscription_number,
-                alerts=alerts)
+                alerts=alerts,
+                forms_data=forms_data)
 
         return render_template(
-            'forms/create.html',
+            'forms/index.html',
             regions=regions_objects,
             communes=communes_objects,
             cnes=cnes_objects,
-            current_date=current_date)
+            current_date=current_date,
+            forms_data=forms_data)
 
-    @app.route('/forms', methods=['GET'])
-    def get_forms():
-        forms = Form.query.all()
-        forms_data = []
-        for form in forms:
-            form_data = {
-                'n_atencion': form.attention_number,
-                'cne': form.cne.description,
-                'comuna': form.property.block.commune.description,
-                'manzana': form.property.block.number,
-                'predio': form.property.number,
-                'fojas': form.pages,
-                'fecha_inscripcion': form.inscription_date,
-                'numero_inscripcion': form.inscription_number,
-                'transacciones': len(form.transactions)
-            }
-            forms_data.append(form_data)
-
-        return render_template('forms/index.html', forms_data=forms_data)
-
+    @app.route('/forms', defaults={'attention_number': None}, methods=['GET'])
     @app.route('/forms/<attention_number>', methods=['GET'])
-    def get_form(attention_number):
+    def forms_index(attention_number):
+        forms_data = get_forms()
+        if not attention_number:
+            return render_template('forms/index.html', forms_data=forms_data)
+
         uuid_attention_num = uuid.UUID(str(attention_number))
         form_object = Form.query.filter_by(
             attention_number=uuid_attention_num).one()
@@ -210,10 +216,11 @@ def create_app():
             if not transaction.is_buyer]
 
         return render_template(
-            'forms/show.html',
-            form=form_object,
+            'forms/index.html',
+            form_data=form_object,
             buyers=buyers,
-            sellers=sellers
+            sellers=sellers,
+            forms_data=forms_data
         )
 
     @app.route('/api/v1/regions/all', methods=['GET'])
