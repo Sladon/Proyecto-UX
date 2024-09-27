@@ -1,97 +1,179 @@
-{% extends 'base.html' %}
-
-{% block title %}Registro de formularios{% endblock %}
-
-{% block custom_css %}
-<style>
-    .table-responsive {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    .container {
-        margin-right: 0;
-        margin-left: 0;
-        padding-right: 0;
-        padding-left: 0;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<!-- Formularios -->
-<div class="flex-1 bg-white p-6">
-    <h2 class="text-xl font-bold mb-4">Formularios Ingresados</h2>
-    <div class="flex justify-between mb-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-2/3">
-          <a href="{{ url_for('create_form') }}" class="bg-green-500 text-white py-2 px-4 rounded-lg custom-shadow">
-            <i class="fa-solid fa-plus p-2"></i>Agregar Formulario
-          </a>
-          <button class="bg-blue-500 text-white py-2 px-4 rounded-lg custom-shadow">
-              <i class="fa-solid fa-upload p-2"></i>Carga Masiva
-          </button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Registro de formularios{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        .content-wrapper {
+            flex: 1 0 auto;
+        }
+        .active {
+            background-color: #4267B2;
+        }
+        .tooltip-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            left: 50%;
+            top: 100%;
+        }
+        .tooltip-content.show {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+    {% block custom_css %}{% endblock %}
+</head>
+<body class="bg-[#f9f9f9]">
+    <div class="md:flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
+            <div class="mb-8">
+                <div class="text-2xl font-bold">GBR</div>
+                <div class="text-sm">Gestor de bienes raices</div>
+            </div>
+            <ul>
+                <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'property_search' %}active{% endif %}" id="propiedades-tab">
+                    <i class="fa-solid fa-house p-2"></i>Propiedades
+                </li>
+                <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'forms_index' %}active{% endif %}" id="formularios-tab">
+                    <i class="fa-solid fa-file-lines p-2"></i>Formularios
+                </li>
+            </ul>
         </div>
-    </div>
-    <!-- Table -->
-    <div class="bg-white rounded-lg shadow-md p-4">
-        <table class="w-full table-auto mb-4">
-            <thead>
-                <tr>
-                    <th class="px-4 py-2 border">N° Atención</th>
-                    <th class="px-4 py-2 border">CNE</th>
-                    <th class="px-4 py-2 border">Comuna</th>
-                    <th class="px-4 py-2 border">Manzana</th>
-                    <th class="px-4 py-2 border">Predio</th>
-                    <th class="px-4 py-2 border">Fojas</th>
-                    <th class="px-4 py-2 border">Fecha inscripción</th>
-                    <th class="px-4 py-2 border">N° inscripción</th>
-                    <th class="px-4 py-2 border">Transacciones</th>
-                    <th class="px-4 py-2 border">Ver</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for form_data in forms_data %}
-                <tr>
-                    <td class="px-4 py-2 border">{{ form_data.attention_number }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.cne }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.commune }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.block }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.property }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.pages }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.inscription_date }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.inscription_number }}</td>
-                    <td class="px-4 py-2 border">{{ form_data.transactions }}</td>
-                    <td class="px-4 py-2 border">
-                      <a href="{{ url_for('forms_index', attention_number=form_data.attention_number) }}" class="bg-transparent text-black py-2 px-4 rounded-lg custom-shadow hover:bg-blue-500 hover:text-white">
-                          <i class="fa-regular fa-eye"></i>
-                      </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="flex justify-between items-center">
-            <div>Mostrando {{ forms_data|length }} entradas</div>
-            <div>
-                <label for="entries">Mostrar</label>
-                <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1">
-                    <option>10</option>
-                </select>
-                entradas
+        <!-- Mobile Menu Button -->
+        <button id="menu-button" class="block md:hidden p-4">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- Content -->
+        <div class="flex-1 bg-white p-6">
+            <h2 class="text-xl font-bold mb-4">Formularios Ingresados</h2>
+            <div class="flex justify-between mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-2/3">
+                    <a href="{{ url_for('create_form') }}" class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-300">
+                        <i class="fa-solid fa-plus mr-2"></i>Agregar Formulario
+                    </a>
+                    <div class="relative inline-block">
+                        <button class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+                            <i class="fa-solid fa-upload mr-2"></i>Carga Masiva
+                        </button>
+                        <span class="info-icon ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-blue-600 hover:bg-blue-100 transition duration-300 cursor-pointer" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip(this)">
+                            <i class="fas fa-info text-xs"></i>
+                        </span>
+                        <div class="tooltip-content hidden absolute z-10 w-64 p-4 mt-2 bg-white rounded-lg shadow-lg border border-gray-200">
+                            <p class="text-sm text-gray-700 mb-2">El archivo json debe tener el siguiente formato:</p>
+                            <pre class="text-xs bg-gray-100 p-2 rounded">
+{
+  "F2890": [
+    {
+      "CNE": 99,
+      "bienRaiz": {
+        "comuna": 77,
+        "manzana": 64,
+        ...
+      },
+      ...
+    },
+    ...
+  ]
+}
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Table -->
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <table class="w-full table-auto mb-4">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2 border">N° Atención</th>
+                            <th class="px-4 py-2 border">CNE</th>
+                            <th class="px-4 py-2 border">Comuna</th>
+                            <th class="px-4 py-2 border">Manzana</th>
+                            <th class="px-4 py-2 border">Predio</th>
+                            <th class="px-4 py-2 border">Fojas</th>
+                            <th class="px-4 py-2 border">Fecha inscripción</th>
+                            <th class="px-4 py-2 border">N° inscripción</th>
+                            <th class="px-4 py-2 border">Transacciones</th>
+                            <th class="px-4 py-2 border">Ver</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form_data in forms_data %}
+                        <tr>
+                            <td class="px-4 py-2 border">{{ form_data.attention_number }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.cne }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.commune }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.block }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.property }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.pages }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.inscription_date }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.inscription_number }}</td>
+                            <td class="px-4 py-2 border">{{ form_data.transactions }}</td>
+                            <td class="px-4 py-2 border">
+                                <a href="{{ url_for('forms_index', attention_number=form_data.attention_number) }}" class="bg-transparent text-black py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white transition duration-300">
+                                    <i class="fa-regular fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="flex justify-between items-center">
+                    <div>Mostrando {{ forms_data|length }} entradas</div>
+                    <div>
+                        <label for="entries">Mostrar</label>
+                        <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1">
+                            <option>10</option>
+                        </select>
+                        entradas
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button class="p-2">1</button>
+                    <button class="p-2">2</button>
+                </div>
             </div>
         </div>
-        <div class="mt-4 flex justify-end">
-            <button class="p-2">1</button>
-            <button class="p-2">2</button>
-        </div>
     </div>
-</div>
 
-{% if form_data %}
-   {% include 'forms/show.html' %}
-{% endif %}
-{% if cnes %}
-   {% include 'forms/create.html' %}
-{% endif %}
+    {% if form_data %}
+       {% include 'forms/show.html' %}
+    {% endif %}
+    {% if cnes %}
+       {% include 'forms/create.html' %}
+    {% endif %}
 
-{% endblock %}
+    <script>
+        document.getElementById('propiedades-tab').addEventListener('click', function() {
+            window.location.href = "{{ url_for('property_search') }}";
+        });
+
+        document.getElementById('formularios-tab').addEventListener('click', function() {
+            window.location.href = "{{ url_for('forms_index') }}";
+        });
+
+        document.getElementById('menu-button').addEventListener('click', function() {
+            const sidebar = document.querySelector('.w-64');
+            sidebar.classList.toggle('hidden');
+        });
+
+        function showTooltip(event, element) {
+            var tooltip = element.nextElementSibling;
+            tooltip.classList.remove('hidden');
+            tooltip.classList.add('show');
+        }
+
+        function hideTooltip(element) {
+            var tooltip = element.nextElementSibling;
+            tooltip.classList.remove('show');
+            tooltip.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
