@@ -1,5 +1,5 @@
 from os import environ as env
-from os import makedirs
+from os import makedirs, path
 from flask import Flask
 from flask import render_template, redirect, url_for, jsonify, request
 from datetime import date, datetime
@@ -195,14 +195,19 @@ def create_app():
             communes=communes_objects,
             cnes=cnes_objects,
             current_date=current_date,
-            forms_data=forms_data)
+            forms_data=forms_data,
+        )
 
     @app.route('/forms', defaults={'attention_number': None}, methods=['GET'])
     @app.route('/forms/<attention_number>', methods=['GET'])
     def forms_index(attention_number):
+        template_path = path.join(app.static_folder, 'json/upload_template.json')
+        with open(template_path, encoding='utf-8') as json_file:
+            json_data = json.load(json_file)
+
         forms_data = get_forms()
         if not attention_number:
-            return render_template('forms/index.html', forms_data=forms_data)
+            return render_template('forms/index.html', forms_data=forms_data, json_data=json.dumps(json_data, indent=1, ensure_ascii=False),)
 
         uuid_attention_num = uuid.UUID(str(attention_number))
         form_object = Form.query.filter_by(
@@ -220,7 +225,7 @@ def create_app():
             form_data=form_object,
             buyers=buyers,
             sellers=sellers,
-            forms_data=forms_data
+            forms_data=forms_data,
         )
 
     @app.route('/api/v1/regions/all', methods=['GET'])

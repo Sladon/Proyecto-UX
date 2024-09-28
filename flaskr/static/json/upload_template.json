@@ -1,0 +1,27 @@
+{
+  "F2890": [
+    {
+      "nroInscripcion": "Número de inscripción, eg: 444",
+      "bienRaiz": {
+        "comuna": "Número de la comuna, eg: 1",
+        "manzana": "Número de la manzana, eg: 1",
+        "predio": "Número del predio, eg: 32"
+      },
+      "adquirentes": [
+        {
+          "RUNRUT": "RUN/RUT del adquirente, eg: 11111111-1",
+          "porcDerecho": "Porcentaje de derecho del adquirente, eg: 15"
+        }
+      ],
+      "enajenantes": [
+        {
+          "RUNRUT": "RUN/RUT del enajenante, eg: 22222222-2",
+          "porcDerecho": "Porcentaje de derecho del enajenante, eg: 15"
+        }
+      ],
+      "fojas": "Número de fojas, eg: 2",
+      "fechaInscripcion": "Fecha de inscripción (YYYY-MM-DD), eg: 2021-06-06",
+      "CNE": "Código de inscripción, eg: 8"
+    }
+  ]
+}

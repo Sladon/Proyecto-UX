@@ -58,30 +58,15 @@
                         <i class="fa-solid fa-plus mr-2"></i>Agregar Formulario
                     </a>
                     <div class="relative inline-block">
-                        <button class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+                        <button class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300" onclick="openModal()">
                             <i class="fa-solid fa-upload mr-2"></i>Carga Masiva
                         </button>
                         <span class="info-icon ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-blue-600 hover:bg-blue-100 transition duration-300 cursor-pointer" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip(this)">
                             <i class="fas fa-info text-xs"></i>
                         </span>
-                        <div class="tooltip-content hidden absolute z-10 w-64 p-4 mt-2 bg-white rounded-lg shadow-lg border border-gray-200">
-                            <p class="text-sm text-gray-700 mb-2">El archivo json debe tener el siguiente formato:</p>
-                            <pre class="text-xs bg-gray-100 p-2 rounded">
-{
-  "F2890": [
-    {
-      "CNE": 99,
-      "bienRaiz": {
-        "comuna": 77,
-        "manzana": 64,
-        ...
-      },
-      ...
-    },
-    ...
-  ]
-}
-                            </pre>
+                        <div class="tooltip-content hidden absolute z-10 w-128 p-4 mt-2 bg-white rounded-lg shadow-lg border border-gray-200">
+                          <p class="text-sm text-gray-700 mb-2">El archivo json debe tener el siguiente formato:</p>
+                          <pre id="jsonTemplate" class="text-xs bg-gray-100 p-2 rounded">{{ json_data | safe }}</pre>
                         </div>
                     </div>
                 </div>
@@ -142,6 +127,96 @@
         </div>
     </div>
 
+    <div id="uploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+      <div class="bg-white rounded-lg w-3/4 md:w-1/2 p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Carga Masiva</h2>
+          <button class="text-red-500" onclick="closeModal()">X</button>
+        </div>
+        <div>
+          <div class="upload-drop-zone" id="drop-zone">
+            Arrastra tu archivo aquí o
+            <input type="file" id="fileInput" class="custom-file-input" accept=".json">
+            <label class="custom-file-label" for="fileInput">Selecciona un archivo .json</label>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <button type="button" class="btn btn-primary" onclick="uploadFile()">Subir Archivo</button>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+    .upload-drop-zone {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .modal.show {
+        display: block;
+    }
+    .tooltip-content {
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    </style>
+    
+    <script>
+    // INFO json
+    function showTooltip(event, element) {
+        const tooltip = element.nextElementSibling;
+        tooltip.classList.remove('hidden');
+    }
+
+    function hideTooltip(event, element) {
+        const tooltip = element.nextElementSibling;
+        if (!tooltip.contains(event.relatedTarget)) {
+            tooltip.classList.add('hidden');
+        }
+    }
+
+    document.getElementById('copyButton').addEventListener('click', function() {
+        const jsonContent = document.getElementById('jsonTemplate').textContent;
+        navigator.clipboard.writeText(jsonContent).then(() => {
+            alert("JSON copied to clipboard!");
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    });
+
+    // upload modal
+    function openModal() {
+        document.getElementById('uploadModal').classList.remove('hidden');
+    }
+    
+    function closeModal() {
+        document.getElementById('uploadModal').classList.add('hidden');
+    }
+    
+    function uploadFile() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append('jsonData', file);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                console.log('File uploaded successfully!');
+                location.reload();
+            } else {
+                console.error('Error:', xhr.statusText);
+            }
+        };
+        xhr.onerror = function() {
+            console.error('Network Error');
+        };
+        xhr.send(formData);
+    }
+    </script>
+
     {% if form_data %}
        {% include 'forms/show.html' %}
     {% endif %}
@@ -175,5 +250,7 @@
             tooltip.classList.add('hidden');
         }
     </script>
+
+    
 </body>
 </html>
