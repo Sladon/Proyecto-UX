@@ -32,9 +32,10 @@
         <!-- Sidebar -->
         <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
             <div class="mb-8">
-                <div class="text-2xl font-bold">GBR</div>
-                <div class="text-sm">Gestor de bienes raices</div>
-            </div>
+                <div class="text-4xl font-bold">GBR</div>
+                <div class="text-l" style="margin-bottom: 10px;">Gestor de bienes raices</div>
+                <hr>
+              </div>
             <ul>
                 <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'property_search' %}active{% endif %}" id="propiedades-tab">
                     <i class="fa-solid fa-house p-2"></i>Propiedades
@@ -137,11 +138,13 @@
           <div class="upload-drop-zone" id="drop-zone">
             Arrastra tu archivo aquí o
             <input type="file" id="fileInput" class="custom-file-input" accept=".json">
-            <label class="custom-file-label" for="fileInput">Selecciona un archivo .json</label>
+            <label class="custom-file-label" for="fileInput">en formato .json</label>
           </div>
         </div>
         <div class="flex justify-end mt-4">
-          <button type="button" class="btn btn-primary" onclick="uploadFile()">Subir Archivo</button>
+          <button type="button" class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-300" onclick="uploadFile()">
+            <i class="fa-solid fa-plus mr-2"></i> Subir Archivo
+          </button>
         </div>
       </div>
     </div>

@@ -1,5 +1,26 @@
-<div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-  <div class="bg-white rounded-lg w-3/4 md:w-1/2 p-6">
+<style>
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal {
+  overflow-y: auto;
+  max-height: 95vh;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
+
+
+<div id="backdrop" class="backdrop">
+  <div id="modal" class="bg-white rounded-lg w-3/4 md:w-1/2 p-6 modal">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold">Formulario #{{ form_data.attention_number }}</h2>
       <a href="{{ url_for('forms_index') }}" class="text-red-500">X</a>
@@ -52,10 +73,25 @@
   </div>
 </div>
 <script>
-  window.onclick = function(event) {
-    const modal = document.getElementById("modal");
-    if (event.target == modal) {
-      window.location.href = "{{ url_for('forms_index') }}";
-    }
-  };
+// Función para abrir el modal
+function openModal() {
+  document.getElementById("backdrop").style.display = "flex";  // Mostrar el modal
+  document.body.classList.add("modal-open");  // Deshabilitar el scroll del fondo
+}
+
+// Función para cerrar el modal
+function closeModal() {
+  document.getElementById("backdrop").style.display = "none";  // Ocultar el modal
+  document.body.classList.remove("modal-open");  // Habilitar el scroll del fondo
+}
+
+// Cerrar el modal al hacer clic fuera de la misma
+window.onclick = function(event) {
+  const backdrop = document.getElementById("backdrop");
+  const modal = document.getElementById("modal");
+
+  if (event.target == backdrop) {
+    closeModal();  // Llamar a la función que cierra el modal
+  }
+};
 </script>
