@@ -28,6 +28,10 @@
     {% block custom_css %}{% endblock %}
 </head>
 <body class="bg-[#f9f9f9]">
+    <div id="notification" class="fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out translate-y-[-100%]">
+    </div>
+    <audio id="successSound" src="{{ url_for('static', filename='sounds/success.mp3') }}"></audio>
+    <audio id="errorSound" src="{{ url_for('static', filename='sounds/error.mp3') }}"></audio>
     <div class="md:flex h-screen">
         <!-- Sidebar -->
         <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
@@ -222,6 +226,31 @@
         document.getElementById('uploadModal').classList.add('hidden');
     }
     
+    function playSound(isSuccess) {
+        const sound = isSuccess ? document.getElementById('successSound') : document.getElementById('errorSound');
+        sound.currentTime = 0; // Reset the audio to the beginning
+        sound.play().catch(error => console.error('Error playing sound:', error));
+    }
+
+    function showNotification(message, isSuccess) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`;
+        
+        // Play the appropriate sound
+        playSound(isSuccess);
+
+        // Show the notification
+        setTimeout(() => {
+            notification.style.transform = 'translateY(0)';
+        }, 100);
+
+        // Hide the notification after 3 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateY(-100%)';
+        }, 3000);
+    }
+
     function uploadFile() {
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];
@@ -238,17 +267,24 @@
             document.getElementById('loadingAnimation').classList.add('hidden');
             
             if (xhr.status === 200) {
-                console.log('File uploaded successfully!');
-                location.reload();
+                console.log('Archivo subido correctamente. El JSON es válido.');
+                showNotification('Archivo subido correctamente. El JSON es válido.', true);
+                
+                // Delay the page reload
+                setTimeout(function() {
+                    location.reload();
+                }, 1000); // 3000 milliseconds = 3 seconds
             } else {
-                console.error('Error:', xhr.statusText);
+                console.error('Error: El archivo subido no es válido o tiene un formato incorrecto.');
+                showNotification('Error: El archivo subido no es válido o tiene un formato incorrecto.', false);
             }
         };
         xhr.onerror = function() {
             // Hide the loading animation
             document.getElementById('loadingAnimation').classList.add('hidden');
             
-            console.error('Network Error');
+            console.error('Error de red al intentar subir el archivo');
+            showNotification('Error de red al intentar subir el archivo', false);
         };
         xhr.send(formData);
     }
