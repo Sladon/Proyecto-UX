@@ -145,6 +145,11 @@
         </div>
       </div>
     </div>
+
+    <!-- Loading animation -->
+    <div id="loadingAnimation" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+      <div class="loader"></div>
+    </div>
     
     <style>
     .upload-drop-zone {
@@ -160,6 +165,25 @@
     .tooltip-content {
       word-wrap: break-word;
       white-space: pre-wrap;
+    }
+    .loader {
+        border: 8px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid #3498db;
+        width: 60px;
+        height: 60px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
     </style>
     
@@ -200,9 +224,16 @@
         var file = fileInput.files[0];
         var formData = new FormData();
         formData.append('jsonData', file);
+
+        // Show the loading animation
+        document.getElementById('loadingAnimation').classList.remove('hidden');
+        
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/', true);
         xhr.onload = function() {
+            // Hide the loading animation
+            document.getElementById('loadingAnimation').classList.add('hidden');
+            
             if (xhr.status === 200) {
                 console.log('File uploaded successfully!');
                 location.reload();
@@ -211,6 +242,9 @@
             }
         };
         xhr.onerror = function() {
+            // Hide the loading animation
+            document.getElementById('loadingAnimation').classList.add('hidden');
+            
             console.error('Network Error');
         };
         xhr.send(formData);
