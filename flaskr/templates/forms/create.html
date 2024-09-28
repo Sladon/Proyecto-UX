@@ -1,14 +1,14 @@
 <div id="create-form-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg w-full md:w-3/4 p-6 relative max-h-screen overflow-y-auto">
-      <!-- Botón de cerrar con z-index alto para que no se vea tapado -->
-      <button type="button" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 z-50" id="close-modal">
+    <div class="bg-white rounded-lg w-full max-w-screen-md p-6 relative max-h-[90vh] overflow-y-auto">
+      <!-- Botón de cerrar con z-index alto y mejor accesibilidad -->
+      <button type="button" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 z-50 flex items-center" id="close-modal">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
+        <span class="ml-2">Cerrar</span>
       </button>
-    
+
       {% if alerts %}
-      <!-- Añade más espacio en la parte superior para que no bloquee el botón de cerrar -->
       <div class="mb-4 mt-8">
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
           <strong class="font-bold">Alertas:</strong>
@@ -20,122 +20,146 @@
         </div>
       </div>
       {% endif %}
-    
-      <h1 class="mb-4">Inscripción/Enajenación</h1>
+
+      <h1 class="text-xl font-bold mb-4">Inscripción/Enajenación</h1>
       <form method="post" id="create-form">
-        <div class="mb-4">
-          <label for="attention_number" class="block text-gray-700">N° Atención</label>
-          <input type="text" class="form-control w-full border rounded p-2" id="attention_number" name="attention_number" placeholder="Folio" readonly>
-        </div>
-        <div class="mb-4">
-          <label for="cne" class="block text-gray-700">CNE</label>
-          <select class="form-control w-full border rounded p-2" id="cne" name="cne" required>
-            <option value="">Selecciona una opción</option>
-            {% for cne in cnes %}
-            <option value="{{ cne.id }}" {% if cne.id == selected_cne %}selected{% endif %}>{{ cne.description }}</option>
-            {% endfor %}
-          </select>
-        </div>
-    
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label for="region" class="block text-gray-700">Región</label>
-            <select class="form-control w-full border rounded p-2" id="region" name="region" required>
-              <option value="">Selecciona una región</option>
-              {% for region in regions %}
-              <option value="{{ region.id }}" {% if region.id == region_id %}selected{% endif %}>{{ region.description }}</option>
+        <!-- Información General -->
+        <fieldset class="border border-gray-300 p-4 mb-6">
+          <legend class="text-lg font-bold">Información General</legend>
+          <div class="mb-4">
+            <label for="attention_number" class="block text-gray-700">N° Atención</label>
+            <input type="text" class="form-control w-full border rounded p-2" id="attention_number" name="attention_number" placeholder="Folio" readonly>
+          </div>
+          <div class="mb-4">
+            <label for="cne" class="block text-gray-700">CNE</label>
+            <select class="form-control w-full border rounded p-2" id="cne" name="cne" required>
+              <option value="">Selecciona una opción</option>
+              {% for cne in cnes %}
+              <option value="{{ cne.id }}" {% if cne.id == selected_cne %}selected{% endif %}>{{ cne.description }}</option>
               {% endfor %}
             </select>
+            <small class="text-gray-500">Selecciona el CNE correspondiente.</small>
           </div>
-          <div>
-            <label for="commune" class="block text-gray-700">Comuna</label>
-            <select class="form-control w-full border rounded p-2" id="commune" name="commune" required>
-              <option value="">Selecciona una comuna</option>
-              {% for commune in communes %}
-              <option value="{{ commune.id }}" {% if commune.id == commune_id %}selected{% endif %}>{{ commune.description }}</option>
-              {% endfor %}
-            </select>
+        </fieldset>
+
+        <!-- Ubicación -->
+        <fieldset class="border border-gray-300 p-4 mb-6">
+          <legend class="text-lg font-bold">Ubicación</legend>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="region" class="block text-gray-700">Región</label>
+              <select class="form-control w-full border rounded p-2" id="region" name="region" required>
+                <option value="">Selecciona una región</option>
+                {% for region in regions %}
+                <option value="{{ region.id }}" {% if region.id == region_id %}selected{% endif %}>{{ region.description }}</option>
+                {% endfor %}
+              </select>
+              <small class="text-gray-500">Seleccione la región donde se ubica el predio.</small>
+            </div>
+            <div>
+              <label for="commune" class="block text-gray-700">Comuna</label>
+              <select class="form-control w-full border rounded p-2" id="commune" name="commune" required>
+                <option value="">Selecciona una comuna</option>
+                {% for commune in communes %}
+                <option value="{{ commune.id }}" {% if commune.id == commune_id %}selected{% endif %}>{{ commune.description }}</option>
+                {% endfor %}
+              </select>
+              <small class="text-gray-500">Seleccione la comuna correspondiente.</small>
+            </div>
           </div>
-          <div>
-            <label for="block" class="block text-gray-700">Manzana</label>
-            <input type="text" class="form-control w-full border rounded p-2" id="block" name="block" value="{{ block_number if block_number else '' }}" required>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="block" class="block text-gray-700">Manzana</label>
+              <input type="text" class="form-control w-full border rounded p-2" id="block" name="block" value="{{ block_number if block_number else '' }}" required>
+              <small class="text-gray-500">Introduzca el número de manzana.</small>
+            </div>
+            <div>
+              <label for="property" class="block text-gray-700">Predio</label>
+              <input type="text" class="form-control w-full border rounded p-2" id="property" name="property" value="{{ property_number if property_number else '' }}" required>
+              <small class="text-gray-500">Introduzca el número de predio.</small>
+            </div>
           </div>
-          <div>
-            <label for="property" class="block text-gray-700">Predio</label>
-            <input type="text" class="form-control w-full border rounded p-2" id="property" name="property" value="{{ property_number if property_number else '' }}" required>
-          </div>
-        </div>
-    
-        <h2 class="mt-5">Enajenantes</h2>
+        </fieldset>
+
+        <!-- Sección de Enajenantes -->
+        <h2 class="mt-5 text-lg font-bold">Enajenantes</h2>
         <div id="sellers" class="mb-4"></div>
-        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded mb-4" id="add-seller">Agregar Enajenante</button>
-    
-        <h2 class="mt-5">Adquirentes</h2>
+        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-600" id="add-seller">
+          Agregar Enajenante
+        </button>
+
+        <!-- Sección de Adquirentes -->
+        <h2 class="mt-5 text-lg font-bold">Adquirentes</h2>
         <div id="buyers" class="mb-4"></div>
-        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded mb-4" id="add-buyer">Agregar Adquiriente</button>
-    
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label for="fojas" class="block text-gray-700">Fojas</label>
-            <input type="number" class="form-control w-full border rounded p-2" id="fojas" name="fojas" min="0" value="{{ pages }}">
+        <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded mb-4 hover:bg-blue-600" id="add-buyer">
+          Agregar Adquiriente
+        </button>
+
+        <!-- Datos de Inscripción -->
+        <fieldset class="border border-gray-300 p-4 mb-6">
+          <legend class="text-lg font-bold">Datos de Inscripción</legend>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label for="fojas" class="block text-gray-700">Fojas</label>
+              <input type="number" class="form-control w-full border rounded p-2" id="fojas" name="fojas" min="0" value="{{ pages }}">
+            </div>
+            <div>
+              <label for="inscription_date" class="block text-gray-700">Fecha Inscripción</label>
+              <input type="date" class="form-control w-full border rounded p-2" id="inscription_date" name="inscription_date" value="{{ current_date }}">
+            </div>
+            <div>
+              <label for="inscription_number" class="block text-gray-700">Número Inscripción</label>
+              <input type="text" class="form-control w-full border rounded p-2" id="inscription_number" name="inscription_number" value="{{ inscription_number }}">
+            </div>
           </div>
-          <div>
-            <label for="inscription_date" class="block text-gray-700">Fecha Inscripción</label>
-            <input type="date" class="form-control w-full border rounded p-2" id="inscription_date" name="inscription_date" value="{{ current_date }}">
-          </div>
-          <div>
-            <label for="inscription_number" class="block text-gray-700">Número Inscripción</label>
-            <input type="text" class="form-control w-full border rounded p-2" id="inscription_number" name="inscription_number" value="{{ inscription_number }}">
-          </div>
-        </div>
-    
+        </fieldset>
+
+        <!-- Botón de Guardar -->
         <div class="flex justify-end">
-          <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded">
+          <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded w-full hover:bg-green-600">
             <i class="fa-solid fa-save mr-2"></i>Guardar
           </button>
         </div>
       </form>
     </div>
-  </div>
-    
-  {% block custom_js %}
-  <script src="{{ url_for('static', filename='js/helpers/forms.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
-  
-  <script>
-    // Handling adding sellers and buyers dynamically
-    document.getElementById('add-seller').addEventListener('click', function() {
-        addSellerBuyerElement('seller');
-    });
-    document.getElementById('add-buyer').addEventListener('click', function() {
-        addSellerBuyerElement('buyer');
-    });
-  
-    // Botón de cerrar con redirección a forms_index
-    document.getElementById('close-modal').addEventListener('click', function() {
-        window.location.href = "{{ url_for('forms_index') }}"; // Redirige a forms_index
-    });
-  
-    // Simple validation with color change if the input is invalid
-    document.getElementById('create-form').addEventListener('submit', function(e) {
-        const requiredFields = document.querySelectorAll('#create-form input[required], #create-form select[required]');
-        let isValid = true;
-  
-        requiredFields.forEach(function(field) {
-            if (!field.value) {
-                field.style.borderColor = 'red';
-                isValid = false;
-            } else {
-                field.style.borderColor = '';
-            }
-        });
-  
-        if (!isValid) {
-            e.preventDefault();
-            alert('Por favor, completa todos los campos obligatorios.');
-        }
+</div>
 
-    });
-  </script>
-  {% endblock %}
-  
+{% block custom_js %}
+<script src="{{ url_for('static', filename='js/helpers/forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
+
+<script>
+  // Handling adding sellers and buyers dynamically
+  document.getElementById('add-seller').addEventListener('click', function() {
+      addSellerBuyerElement('seller');
+  });
+  document.getElementById('add-buyer').addEventListener('click', function() {
+      addSellerBuyerElement('buyer');
+  });
+
+  // Botón de cerrar con redirección a forms_index
+  document.getElementById('close-modal').addEventListener('click', function() {
+      window.location.href = "{{ url_for('forms_index') }}"; // Redirige a forms_index
+  });
+
+  // Validación en tiempo real
+  document.getElementById('create-form').addEventListener('submit', function(e) {
+      const requiredFields = document.querySelectorAll('#create-form input[required], #create-form select[required]');
+      let isValid = true;
+
+      requiredFields.forEach(function(field) {
+          if (!field.value) {
+              field.style.borderColor = 'red';
+              isValid = false;
+          } else {
+              field.style.borderColor = '';
+          }
+      });
+
+      if (!isValid) {
+          e.preventDefault();
+          alert('Por favor, completa todos los campos obligatorios.');
+      }
+  });
+</script>
+{% endblock %}
