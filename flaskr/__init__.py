@@ -167,8 +167,14 @@ def create_app():
                     inscription_date, inscription_number, buyers, sellers
                 )
 
-                return redirect(
-                    url_for('forms_index', attention_number=form_object.attention_number))
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return jsonify({
+                        'status': 'success',
+                        'message': 'Registro Exitoso',
+                        'redirect': url_for('forms_index', attention_number=form_object.attention_number)
+                    })
+                else:
+                    return redirect(url_for('forms_index', attention_number=form_object.attention_number))
 
             return render_template(
                 'forms/index.html',

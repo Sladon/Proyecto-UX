@@ -15,47 +15,68 @@
     .active {
         background-color: #4267B2;
     }
+    .upload-drop-zone {
+        border: 2px dashed #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .hidden {
+        display: none;
+    }
+    .upload-button {
+        background-color: #22c55e;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        transition: background-color 0.3s;
+    }
+    .upload-button:hover {
+        background-color: #16a34a;
+    }
 </style>
-</head>
 <body class="bg-[#f9f9f9]">
-  <div class="md:flex h-screen">
-    <!-- Sidebar -->
-    <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
-      <div class="mb-8">
-        <div class="text-4xl font-bold">GBR</div>
-        <div class="text-l" style="margin-bottom: 10px;">Gestor de bienes raices</div>
-        <hr>
-      </div>
-      <ul>
-        <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'property_search' %}active{% endif %}" id="propiedades-tab">
-          <i class="fa-solid fa-house p-2"></i>Propiedades
-        </li>
-        <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'forms_index' %}active{% endif %}" id="formularios-tab">
-          <i class="fa-solid fa-file-lines p-2"></i>Formularios
-        </li>
-      </ul>
+    <div id="notification" class="fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out translate-y-[-100%]">
+    </div>  
+    <div class="md:flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
+            <div class="mb-8">
+                <div class="text-4xl font-bold">GBR</div>
+                <div class="text-l" style="margin-bottom: 10px;">Gestor de bienes raices</div>
+                <hr>
+            </div>
+            <ul>
+                <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'property_search' %}active{% endif %}" id="propiedades-tab">
+                    <i class="fa-solid fa-house p-2"></i>Propiedades
+                </li>
+                <li class="my-2 p-2 hover:bg-blue-600 rounded {% if request.endpoint == 'forms_index' %}active{% endif %}" id="formularios-tab">
+                    <i class="fa-solid fa-file-lines p-2"></i>Formularios
+                </li>
+            </ul>
+        </div>
+        <!-- Mobile Menu Button -->
+        <button id="menu-button" class="block md:hidden p-4">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        {% block content %}{% endblock %}
+
+        {% block custom_js %}{% endblock %}
+        <script>
+            document.getElementById('propiedades-tab').addEventListener('click', function() {
+                window.location.href = "{{ url_for('property_search') }}";
+            });
+
+            document.getElementById('formularios-tab').addEventListener('click', function() {
+                window.location.href = "{{ url_for('forms_index') }}";
+            });
+
+            document.getElementById('menu-button').addEventListener('click', function() {
+                const sidebar = document.querySelector('.w-64');
+                sidebar.classList.toggle('hidden');
+            });
+        </script>
     </div>
-    <!-- Mobile Menu Button -->
-    <button id="menu-button" class="block md:hidden p-4">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-
-    {% block content %}{% endblock %}
-
-    {% block custom_js %}{% endblock %}
-    <script>
-      document.getElementById('propiedades-tab').addEventListener('click', function() {
-        window.location.href = "{{ url_for('property_search') }}";
-      });
-
-      document.getElementById('formularios-tab').addEventListener('click', function() {
-        window.location.href = "{{ url_for('forms_index') }}";
-      });
-
-      document.getElementById('menu-button').addEventListener('click', function() {
-        const sidebar = document.querySelector('.w-64');
-        sidebar.classList.toggle('hidden');
-      });
-    </script>
 </body>
 </html>

@@ -157,22 +157,30 @@ document.getElementById('close-modal').addEventListener('click', function() {
 
 // Validación en tiempo real
 document.getElementById('create-form').addEventListener('submit', function(e) {
-    const requiredFields = document.querySelectorAll('#create-form input[required], #create-form select[required]');
-    let isValid = true;
-
-    requiredFields.forEach(function(field) {
-        if (!field.value) {
-            field.style.borderColor = 'red';
-            isValid = false;
-        } else {
-            field.style.borderColor = '';
+    e.preventDefault();
+    
+    fetch('{{ url_for("create_form") }}', {
+        method: 'POST',
+        body: new FormData(this),
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showNotification(data.message, 'success');
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 3000);
+        } else {
+            showNotification('Error al crear el formulario', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error al procesar la solicitud', 'error');
     });
-
-    if (!isValid) {
-        e.preventDefault();
-        alert('Por favor, completa todos los campos obligatorios.');
-    }
 });
 </script>
 {% endblock %}

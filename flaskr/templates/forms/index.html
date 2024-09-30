@@ -138,12 +138,17 @@
           <h2 class="text-xl font-bold">Carga Masiva</h2>
           <button class="text-red-500" onclick="closeModal()">X</button>
         </div>
-        <div>
-          <div class="upload-drop-zone" id="drop-zone">
-            Arrastra tu archivo aquí o
-            <input type="file" id="fileInput" class="custom-file-input" accept=".json">
-            <label class="custom-file-label" for="fileInput">en formato .json</label>
-          </div>
+        <div class="upload-drop-zone p-8 border-2 border-dashed border-gray-300 rounded-lg text-center" id="drop-zone">
+            <p class="text-gray-600 mb-4">Arrastra tu archivo aquí o</p>
+            <label for="fileInput" class="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"></path>
+                <path d="M9 13h2v5a1 1 0 11-2 0v-5z"></path>
+              </svg>
+              Seleccionar archivo
+            </label>
+            <input type="file" id="fileInput" class="hidden" accept=".json">
+            <p class="text-gray-500 mt-2">en formato .json</p>
         </div>
         <div class="flex justify-end mt-4">
           <button type="button" class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-300" onclick="uploadFile()">
