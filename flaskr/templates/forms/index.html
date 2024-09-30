@@ -24,6 +24,25 @@
             display: block;
             opacity: 1;
         }
+        body {
+            overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 30px;
+            background-color: #ff6347;
+            top: -100px; /* Start from above the viewport */
+            animation: confettiFall 3s infinite;
+        }
+        @keyframes confettiFall {
+            0% {
+              transform: translateY(0) rotate(0deg); /* Start from the top */
+            }
+            100% {
+              transform: translateY(100vh) rotate(720deg); /* End at the bottom */
+            }
+        }
     </style>
     {% block custom_css %}{% endblock %}
 </head>
@@ -37,7 +56,7 @@
         <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
             <div class="mb-8">
                 <div class="text-4xl font-bold">GBR</div>
-                <div class="text-l" style="margin-bottom: 10px;">Gestor de bienes raices</div>
+                <div class="text-l" style="margin-bottom: 10px;">Gestor de bienes raíces</div>
                 <hr>
               </div>
             <ul>
@@ -256,6 +275,20 @@
         }, 3000);
     }
 
+    function createConfetti() {
+        const confettiCount = 100;
+        for (let i = 0; i < confettiCount; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }, i * 100);
+        }
+    }
+
     function uploadFile() {
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];
@@ -274,11 +307,12 @@
             if (xhr.status === 200) {
                 console.log('Archivo subido correctamente. El JSON es válido.');
                 showNotification('Archivo subido correctamente. El JSON es válido.', true);
+                createConfetti(); // Show confetti animation
                 
                 // Delay the page reload
                 setTimeout(function() {
                     location.reload();
-                }, 1000); // 3000 milliseconds = 3 seconds
+                }, 2000); // 1000 milliseconds = 1 second
             } else {
                 console.error('Error: El archivo subido no es válido o tiene un formato incorrecto.');
                 showNotification('Error: El archivo subido no es válido o tiene un formato incorrecto.', false);
@@ -329,6 +363,5 @@
         }
     </script>
 
-    
 </body>
 </html>
