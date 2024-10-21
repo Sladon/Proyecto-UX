@@ -12,7 +12,6 @@ function loadDBobjects(targetElementID, endpoint, optionsFunc, dataFunction) {
     .catch(error => {
         console.error('Error loading data:', error);
     });
-
 }
 
 const communeEndpoint = (regionId) => `/api/v1/regions/${regionId}/communes`;
@@ -39,6 +38,7 @@ function regionOptionsFunction(options) {
         const option = options[i];
         option.selected = false;
     }
+    console.log("aa")
 }
 
 function regionDataFunction(data, options) {

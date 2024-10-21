@@ -63,7 +63,8 @@
         {% block content %}{% endblock %}
 
         {% block custom_js %}{% endblock %}
-        <script>
+        
+        <script>                
             document.getElementById('propiedades-tab').addEventListener('click', function() {
                 window.location.href = "{{ url_for('property_search') }}";
             });
@@ -76,6 +77,7 @@
                 const sidebar = document.querySelector('.w-64');
                 sidebar.classList.toggle('hidden');
             });
+
         </script>
     </div>
 </body>

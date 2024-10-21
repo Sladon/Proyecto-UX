@@ -15,7 +15,7 @@ select option[disabled] {
 <!-- Properties -->
 <div class="flex-1 bg-white p-6">
   <h2 class="text-xl font-bold mb-4">Historial propiedades</h2>
-  <form method="post" action="{{ url_for('property_search') }}">
+  <form id="searchForm" method="post" action="{{ url_for('property_search') }}">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
       <div>
         <label for="region" class="block text-sm font-medium text-gray-700">Región:</label>
@@ -69,6 +69,8 @@ select option[disabled] {
       </div>
     </div>
   </form>
+
+  <audio id="searchSound" src="{{ url_for('static', filename='sounds/search.wav') }}"></audio>
 
   <!-- Table -->
   <div class="bg-white rounded-lg shadow-md p-4">
@@ -125,6 +127,15 @@ select option[disabled] {
   </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
+<script src="{{ url_for('static', filename='js/helpers/general.js') }}">
+</script>
+
+<script>
+  document.getElementById('searchForm').addEventListener('submit', function(event) {
+                event.preventDefault(); 
+                const audio = document.getElementById('searchSound');
+                
+                audio.play();})
+</script>
 
 {% endblock %}
