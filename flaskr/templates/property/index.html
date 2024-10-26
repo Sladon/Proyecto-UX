@@ -7,141 +7,274 @@
 select option[disabled] {
     display: none;
 }
+
+/* Estilos para la tabla */
+.table-responsive table thead th {
+    background-color: #f8fafc;  /* Cambiado a un gris muy claro */
+    color: #000;  /* Cambiado a negro */
+    position: relative;
+    font-weight: 600;  /* Semi-bold para mejor legibilidad */
+}
+
+/* Colores alternados para columnas */
+.table-responsive table td:nth-child(1),
+.table-responsive table th:nth-child(1) {
+    background-color: #f0f9ff;
+}
+
+.table-responsive table td:nth-child(2),
+.table-responsive table th:nth-child(2) {
+    background-color: #f0fdf4;
+}
+
+.table-responsive table td:nth-child(3),
+.table-responsive table th:nth-child(3) {
+    background-color: #fdf2f8;
+}
+
+.table-responsive table td:nth-child(4),
+.table-responsive table th:nth-child(4) {
+    background-color: #fff7ed;
+}
+
+.table-responsive table td:nth-child(5),
+.table-responsive table th:nth-child(5) {
+    background-color: #f5f3ff;
+}
+
+.table-responsive table td:nth-child(6),
+.table-responsive table th:nth-child(6) {
+    background-color: #f0f9ff;
+}
+
+.table-responsive table td:nth-child(7),
+.table-responsive table th:nth-child(7) {
+    background-color: #f0fdf4;
+}
+
+.table-responsive table td:nth-child(8),
+.table-responsive table th:nth-child(8) {
+    background-color: #fdf2f8;
+}
+
+.table-responsive table td:nth-child(9),
+.table-responsive table th:nth-child(9) {
+    background-color: #fff7ed;
+}
+
+.table-responsive table td:nth-child(10),
+.table-responsive table th:nth-child(10) {
+    background-color: #f5f3ff;
+}
+
+.table-responsive table td:nth-child(11),
+.table-responsive table th:nth-child(11) {
+    background-color: #f0f9ff;
+}
+
+/* Efecto hover en las filas */
+.table-responsive table tbody tr:hover td {
+    background-color: #e5e7eb;
+    transition: background-color 0.2s ease;
+}
+
+/* Mejoras adicionales para la tabla */
+.table-responsive table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-responsive table th,
+.table-responsive table td {
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+}
+
+/* Ajuste para el scroll horizontal */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos adicionales para los controles del formulario */
+.form-control {
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Estilos para el botón de búsqueda */
+.custom-shadow {
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.custom-shadow:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px -1px rgba(59, 130, 246, 0.4);
+}
 </style>
 {% endblock %}
 
-{% block content %}
+[... resto del código HTML igual al anterior ...]
 
+{% block content %}
 <!-- Properties -->
 <div class="flex-1 bg-white p-6">
-  <h2 class="text-xl font-bold mb-4">Historial propiedades</h2>
-  <form id="searchForm" method="post" action="{{ url_for('property_search') }}">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
-      <div>
-        <label for="region" class="block text-sm font-medium text-gray-700">Región:</label>
-        <select id="region" name="region" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="loadCommunes(this.value)">
-          <option value="">Selecciona una región</option>
-          {% for region in regions %}
-            {% if region.id == region_id %}
-              <option value="{{ region.id }}" selected>{{ region.description }}</option>
-            {% else %}
-              <option value="{{ region.id }}">{{ region.description }}</option>
-            {% endif %}
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label for="comuna" class="block text-sm font-medium text-gray-700">Comuna:</label>
-        <select id="comuna" name="comuna" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="loadRegions(this.value)">
-          <option value="">Selecciona una comuna</option>
-          {% for commune in communes %}
-            {% if commune.id == commune_id %}
-              <option value="{{ commune.id }}" selected>{{ commune.description }}</option>
-            {% else %}
-              <option value="{{ commune.id }}">{{ commune.description }}</option>
-            {% endif %}
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label for="manzana" class="block text-sm font-medium text-gray-700">Manzana:</label>
-        <input type="text" id="manzana" name="manzana" class="mt-1 block w-full px-3 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" value="{{ block_number if block_number else '' }}">
-      </div>
-      <div>
-        <label for="predio" class="block text-sm font-medium text-gray-700">Predio:</label>
-        <input type="text" id="predio" name="predio" class="mt-1 block w-full px-3 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" value="{{ property_number if property_number else '' }}">
-      </div>
-      <div>
-        <label for="anio" class="block text-sm font-medium text-gray-700">Año:</label>
-        <select id="anio" name="anio" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-          <option value="">Selecciona un año</option>
-          {% for y in range(min_year, max_year) %}
-            {% if y == selected_year %}
-              <option value="{{ y }}" selected>{{ y }}</option>
-            {% else %}
-              <option value="{{ y }}">{{ y }}</option>
-            {% endif %}
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <button type="submit" class="mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-lg custom-shadow">Buscar</button>
-      </div>
-    </div>
-  </form>
+    <h2 class="text-xl font-bold mb-4">Historial propiedades</h2>
+    
+    <!-- Formulario de búsqueda -->
+    <form id="searchForm" method="post" action="{{ url_for('property_search') }}" class="mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <!-- Región -->
+            <div>
+                <label for="region" class="block text-sm font-medium text-gray-700 mb-1">Región:</label>
+                <select id="region" name="region" class="form-control mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="loadCommunes(this.value)">
+                    <option value="">Selecciona una región</option>
+                    {% for region in regions %}
+                        {% if region.id == region_id %}
+                            <option value="{{ region.id }}" selected>{{ region.description }}</option>
+                        {% else %}
+                            <option value="{{ region.id }}">{{ region.description }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
 
-  <audio id="searchSound" src="{{ url_for('static', filename='sounds/search.wav') }}"></audio>
+            <!-- Comuna -->
+            <div>
+                <label for="comuna" class="block text-sm font-medium text-gray-700 mb-1">Comuna:</label>
+                <select id="comuna" name="comuna" class="form-control mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="loadRegions(this.value)">
+                    <option value="">Selecciona una comuna</option>
+                    {% for commune in communes %}
+                        {% if commune.id == commune_id %}
+                            <option value="{{ commune.id }}" selected>{{ commune.description }}</option>
+                        {% else %}
+                            <option value="{{ commune.id }}">{{ commune.description }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
 
-  <!-- Table -->
-  <div class="bg-white rounded-lg shadow-md p-4">
-    <div class="table-responsive table-responsive-lg">
-      <table class="w-full table-auto mb-4">
-        <thead>
-          <tr>
-            <th class="px-4 py-2 border">Número de propiedad</th>
-            <th class="px-4 py-2 border">Manzana</th>
-            <th class="px-4 py-2 border">Comuna</th>
-            <th class="px-4 py-2 border">Región</th>
-            <th class="px-4 py-2 border">RUT de persona</th>
-            <th class="px-4 py-2 border">Porcentaje</th>
-            <th class="px-4 py-2 border">Páginas</th>
-            <th class="px-4 py-2 border">Fecha de inscripción</th>
-            <th class="px-4 py-2 border">Número de inscripción</th>
-            <th class="px-4 py-2 border">Año de vigencia inicial</th>
-            <th class="px-4 py-2 border">Año de vigencia final</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for multi_property in multi_properties %}
-          <tr>
-            <td class="px-4 py-2 border">{{ multi_property.property.number }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.property.block.number }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.property.block.commune.description }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.property.block.commune.region.description }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.person.run }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.percentage if multi_property.percentage is not none else 'N/A' }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.pages }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.inscription_date }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.inscription_number }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.initial_vigency_year }}</td>
-            <td class="px-4 py-2 border">{{ multi_property.final_vigency_year if multi_property.final_vigency_year is not none else 'N/A' }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+            <!-- Manzana -->
+            <div>
+                <label for="manzana" class="block text-sm font-medium text-gray-700 mb-1">Manzana:</label>
+                <input type="text" id="manzana" name="manzana" class="form-control mt-1 block w-full px-3 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" value="{{ block_number if block_number else '' }}">
+            </div>
+
+            <!-- Predio -->
+            <div>
+                <label for="predio" class="block text-sm font-medium text-gray-700 mb-1">Predio:</label>
+                <input type="text" id="predio" name="predio" class="form-control mt-1 block w-full px-3 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" value="{{ property_number if property_number else '' }}">
+            </div>
+
+            <!-- Año -->
+            <div>
+                <label for="anio" class="block text-sm font-medium text-gray-700 mb-1">Año:</label>
+                <select id="anio" name="anio" class="form-control mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Selecciona un año</option>
+                    {% for y in range(min_year, max_year) %}
+                        {% if y == selected_year %}
+                            <option value="{{ y }}" selected>{{ y }}</option>
+                        {% else %}
+                            <option value="{{ y }}">{{ y }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Botón de búsqueda -->
+            <div>
+                <button type="submit" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg custom-shadow">
+                    Buscar
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <audio id="searchSound" src="{{ url_for('static', filename='sounds/search.wav') }}"></audio>
+
+    <!-- Tabla de resultados -->
+    <div class="bg-white rounded-lg shadow-md p-4">
+        <div class="table-responsive">
+            <table class="w-full table-auto mb-4">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 border">Número de propiedad</th>
+                        <th class="px-4 py-2 border">Manzana</th>
+                        <th class="px-4 py-2 border">Comuna</th>
+                        <th class="px-4 py-2 border">Región</th>
+                        <th class="px-4 py-2 border">RUT de persona</th>
+                        <th class="px-4 py-2 border">Porcentaje</th>
+                        <th class="px-4 py-2 border">Páginas</th>
+                        <th class="px-4 py-2 border">Fecha de inscripción</th>
+                        <th class="px-4 py-2 border">Número de inscripción</th>
+                        <th class="px-4 py-2 border">Año de vigencia inicial</th>
+                        <th class="px-4 py-2 border">Año de vigencia final</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for multi_property in multi_properties %}
+                    <tr>
+                        <td class="px-4 py-2 border">{{ multi_property.property.number }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.property.block.number }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.property.block.commune.description }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.property.block.commune.region.description }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.person.run }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.percentage if multi_property.percentage is not none else 'N/A' }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.pages }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.inscription_date }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.inscription_number }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.initial_vigency_year }}</td>
+                        <td class="px-4 py-2 border">{{ multi_property.final_vigency_year if multi_property.final_vigency_year is not none else 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Controles de paginación -->
+        <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-gray-600">
+                Mostrando {{ multi_properties | length }} entradas
+            </div>
+            <div class="flex items-center space-x-2">
+                <label for="entries" class="text-sm text-gray-600">Mostrar</label>
+                <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1 text-sm">
+                    <option>10</option>
+                </select>
+                <span class="text-sm text-gray-600">entradas</span>
+            </div>
+        </div>
+        
+        <!-- Números de página -->
+        <div class="mt-4 flex justify-end space-x-2">
+            <button class="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700">1</button>
+            <button class="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700">2</button>
+        </div>
     </div>
-    <div class="flex justify-between items-center">
-      <div>Mostrando {{ multi_properties | length }} entradas</div>
-      <div>
-        <label for="entries">Mostrar</label>
-        <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1">
-          <option>10</option>
-        </select>
-        entradas
-      </div>
-    </div>
-    <div class="mt-4 flex justify-end">
-      <button class="p-2">1</button>
-      <button class="p-2">2</button>
-    </div>
-  </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/helpers/general.js') }}">
-</script>
+<script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
 
 <script>
     document.getElementById('searchForm').addEventListener('submit', function(event) {
-    event.preventDefault(); 
-    const audio = document.getElementById('searchSound');
-    const form = this;
-    
-    audio.play();
-    
-    setTimeout(function() {
-        form.submit();
-    }, 1000);
-});
+        event.preventDefault();
+        const audio = document.getElementById('searchSound');
+        const form = this;
+        
+        audio.play();
+        
+        setTimeout(function() {
+            form.submit();
+        }, 1000);
+    });
 </script>
 
 {% endblock %}
