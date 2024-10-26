@@ -36,6 +36,7 @@
     }
 </style>
 <body class="bg-[#f9f9f9]">
+    <audio id="pageLoadSound" src="{{ url_for('static', filename='sounds/switch-page.mp3') }}"></audio>
     <div id="notification" class="fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out translate-y-[-100%]">
     </div>  
     <div class="md:flex h-screen">
@@ -64,13 +65,36 @@
 
         {% block custom_js %}{% endblock %}
         
-        <script>                
+        <script>     
+        // Primero, aseguremos que el audio está listo
+        const pageLoadSound = document.getElementById('pageLoadSound');
+
+        // Función para manejar la reproducción y navegación
+            function handleTabClick(route) {
+                // Intenta reproducir el sonido y maneja cualquier error
+                const playPromise = pageLoadSound.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            // El sonido se reprodujo correctamente
+                            setTimeout(() => {
+                                window.location.href = route;
+                            }, 1000);
+                        })
+                        .catch(error => {
+                            // Si hay un error con el sonido, al menos navegamos
+                            console.error('Error playing sound:', error);
+                            window.location.href = route;
+                        });
+                }
+            }             
             document.getElementById('propiedades-tab').addEventListener('click', function() {
-                window.location.href = "{{ url_for('property_search') }}";
+                handleTabClick("{{ url_for('property_search') }}");
             });
 
             document.getElementById('formularios-tab').addEventListener('click', function() {
-                window.location.href = "{{ url_for('forms_index') }}";
+                handleTabClick("{{ url_for('forms_index') }}");
             });
 
             document.getElementById('menu-button').addEventListener('click', function() {
