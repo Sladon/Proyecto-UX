@@ -131,11 +131,17 @@ select option[disabled] {
 </script>
 
 <script>
-  document.getElementById('searchForm').addEventListener('submit', function(event) {
-                event.preventDefault(); 
-                const audio = document.getElementById('searchSound');
-                
-                audio.play();})
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+    const audio = document.getElementById('searchSound');
+    const form = this;
+    
+    audio.play();
+    
+    setTimeout(function() {
+        form.submit();
+    }, 1000);
+});
 </script>
 
 {% endblock %}
