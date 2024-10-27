@@ -4,19 +4,43 @@
 
 {% block custom_css %}
 <style>
+    .content-wrapper {
+        flex: 1 0 auto;
+    }
+    .active {
+        background-color: #4267B2;
+    }
     .tooltip-content {
         display: none;
         opacity: 0;
         transition: opacity 0.3s ease-in-out;
         left: 50%;
         top: 100%;
+        word-wrap: break-word;
+        white-space: pre-wrap;
     }
     .tooltip-content.show {
         display: block;
         opacity: 1;
     }
+    /* Nuevos estilos para manejar el scroll */
     body {
-        overflow: hidden;
+        overflow: hidden; /* Mantiene el body sin scroll */
+        height: 100vh;
+    }
+    .md\:flex {
+        height: 100vh;
+    }
+    /* El contenedor principal del contenido */
+    .flex-1 {
+        overflow-y: auto; /* Permite scroll vertical en el contenido */
+        height: 100vh;
+        padding-bottom: 2rem; /* Agrega espacio al final del contenido */
+    }
+    /* Mantén el sidebar fijo */
+    .w-64 {
+        height: 100vh;
+        overflow-y: auto; /* Por si el menú es muy largo */
     }
     .confetti {
         position: absolute;
@@ -43,10 +67,6 @@
     }
     .modal.show {
         display: block;
-    }
-    .tooltip-content {
-      word-wrap: break-word;
-      white-space: pre-wrap;
     }
     .loader {
         border: 8px solid #f3f3f3;
@@ -86,7 +106,9 @@
                 <button class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300" onclick="openModal()">
                     <i class="fa-solid fa-upload mr-2"></i>Carga Masiva
                 </button>
-                <span class="info-icon ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-blue-600 hover:bg-blue-100 transition duration-300 cursor-pointer" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip(this)">
+                <span class="info-icon ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-blue-600 hover:bg-blue-100 transition duration-300 cursor-pointer" 
+                onmouseover="showTooltip(event, this)" 
+                onmouseout="hideTooltip(this)">
                     <i class="fas fa-info text-xs"></i>
                 </span>
                 <div class="tooltip-content hidden absolute z-10 w-128 p-4 mt-2 bg-white rounded-lg shadow-lg border border-gray-200">
@@ -196,16 +218,17 @@
 <script>
     // INFO json
     function showTooltip(event, element) {
-        const tooltip = element.nextElementSibling;
+        var tooltip = element.nextElementSibling;
         tooltip.classList.remove('hidden');
+        tooltip.classList.add('show');
     }
 
-    function hideTooltip(event, element) {
-        const tooltip = element.nextElementSibling;
-        if (!tooltip.contains(event.relatedTarget)) {
-            tooltip.classList.add('hidden');
-        }
+    function hideTooltip(element) {
+        var tooltip = element.nextElementSibling;
+        tooltip.classList.remove('show');
+        tooltip.classList.add('hidden');
     }
+
 
     // Modal functions
     function openModal() {
@@ -238,19 +261,6 @@
         }, 3000);
     }
 
-    function createConfetti() {
-        const confettiCount = 100;
-        for (let i = 0; i < confettiCount; i++) {
-            setTimeout(() => {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 3000);
-            }, i * 100);
-        }
-    }
 
     function uploadFile() {
         var fileInput = document.getElementById('fileInput');
@@ -268,7 +278,6 @@
             if (xhr.status === 200) {
                 console.log('Archivo subido correctamente. El JSON es válido.');
                 showNotification('Archivo subido correctamente. El JSON es válido.', true);
-                createConfetti();
                 
                 setTimeout(function() {
                     location.reload();

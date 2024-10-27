@@ -142,6 +142,20 @@
 <script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
 
 <script>
+  function createConfetti() {
+      const confettiCount = 100;
+      for (let i = 0; i < confettiCount; i++) {
+          setTimeout(() => {
+              const confetti = document.createElement('div');
+              confetti.classList.add('confetti');
+              confetti.style.left = Math.random() * 100 + 'vw';
+              confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+              document.body.appendChild(confetti);
+              setTimeout(() => confetti.remove(), 3000);
+          }, i * 100);
+      }
+  }
+
 // Handling adding sellers and buyers dynamically
 document.getElementById('add-seller').addEventListener('click', function() {
     addSellerBuyerElement('seller');
@@ -169,6 +183,7 @@ document.getElementById('create-form').addEventListener('submit', function(e) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
+            createConfetti()
             showNotification(data.message, 'success');
             setTimeout(() => {
                 window.location.href = data.redirect;
