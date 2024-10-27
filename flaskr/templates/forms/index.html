@@ -192,7 +192,7 @@
                         <i class="fa-solid fa-plus mr-2"></i>Agregar Formulario
                     </a>
                     <div class="relative inline-block">
-                        <button class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300" onclick="openModal()">
+                        <button id="BtnCargaMasiva" class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300" onclick="openModal()">
                             <i class="fa-solid fa-upload mr-2"></i>Carga Masiva
                         </button>
                         <span class="info-icon ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-blue-600 hover:bg-blue-100 transition duration-300 cursor-pointer" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip(this)">
@@ -273,7 +273,7 @@
             </div>
             <div class="upload-drop-zone p-8 border-2 border-dashed border-gray-300 rounded-lg text-center" id="drop-zone">
                 <p class="text-gray-600 mb-4">Arrastra tu archivo aquí o</p>
-                <label for="fileInput" class="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <label id="selectFileBtn" for="fileInput" class="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"></path>
                         <path d="M9 13h2v5a1 1 0 11-2 0v-5z"></path>
@@ -333,6 +333,16 @@
             sound.currentTime = 0;
             sound.play().catch(error => console.error('Error playing sound:', error));
         }
+
+        const audio = document.getElementById('interactSound');
+
+        document.getElementById('BtnCargaMasiva').addEventListener('click', function() {
+        audio.play()
+        });
+
+        document.getElementById('selectFileBtn').addEventListener('click', function() {
+        audio.play()
+        });
 
         function showNotification(message, isSuccess) {
             const notification = document.getElementById('notification');
