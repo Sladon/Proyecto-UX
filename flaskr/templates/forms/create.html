@@ -82,7 +82,7 @@
       </fieldset>
 
       <!-- Sección de Enajenantes y Adquirentes con Marco -->
-      <fieldset class="border border-gray-300 p-4 mb-6">
+      <fieldset id="enajAdqForm" class="border border-gray-300 p-4 mb-6">
         <legend class="text-lg font-bold">Enajenantes y Adquirentes</legend>
         <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
@@ -91,7 +91,7 @@
               <!-- Aquí se agregarán los enajenantes dinámicamente -->
             </div>
             <!-- Botón compacto para agregar enajenantes -->
-            <button type="button" class="bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 w-full" id="add-seller">
+            <button id="addEnaj" type="button" class="bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 w-full" id="add-seller">
               <i class="fa fa-plus"></i> Enajenante
             </button>
           </div>
@@ -101,7 +101,7 @@
               <!-- Aquí se agregarán los adquirientes dinámicamente -->
             </div>
             <!-- Botón compacto para agregar adquirientes -->
-            <button type="button" class="bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 w-full" id="add-buyer">
+            <button id="addAdq" type="button" class="bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 w-full" id="add-buyer">
               <i class="fa fa-plus"></i> Adquiriente
             </button>
           </div>
@@ -137,6 +137,8 @@
   </div>
 </div>
 
+<audio id="interactSound" src="{{ url_for('static', filename='sounds/interact.wav') }}"></audio>
+
 {% block custom_js %}
 <script src="{{ url_for('static', filename='js/helpers/forms.js') }}"></script>
 <script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
@@ -156,13 +158,18 @@
       }
   }
 
-// Handling adding sellers and buyers dynamically
-document.getElementById('add-seller').addEventListener('click', function() {
+  const audio = document.getElementById('interactSound');
+
+  // Handling adding sellers and buyers dynamically con sonido
+  document.getElementById('addEnaj').addEventListener('click', function() {
+    audio.play()
     addSellerBuyerElement('seller');
-});
-document.getElementById('add-buyer').addEventListener('click', function() {
+  });
+
+  document.getElementById('addAdq').addEventListener('click', function() {
+    audio.play()
     addSellerBuyerElement('buyer');
-});
+  });
 
 // Botón de cerrar con redirección a forms_index
 document.getElementById('close-modal').addEventListener('click', function() {

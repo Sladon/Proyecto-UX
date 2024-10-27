@@ -188,7 +188,7 @@
             <h2 class="text-xl font-bold mb-4">Formularios Ingresados</h2>
             <div class="flex justify-between mb-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-2/3">
-                    <a href="{{ url_for('create_form') }}" class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-300">
+                    <a id="form-create-btn" href="{{ url_for('create_form') }}" class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-300">
                         <i class="fa-solid fa-plus mr-2"></i>Agregar Formulario
                     </a>
                     <div class="relative inline-block">
@@ -290,6 +290,8 @@
             </div>
         </div>
     </div>
+
+    <audio id="interactSound" src="{{ url_for('static', filename='sounds/interact.wav') }}"></audio> 
 
     <!-- Animación de carga -->
     <div id="loadingAnimation" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
