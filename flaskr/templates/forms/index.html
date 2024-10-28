@@ -197,6 +197,7 @@
 {% block content %}
 <audio id="successSound" src="{{ url_for('static', filename='sounds/success.mp3') }}"></audio>
 <audio id="errorSound" src="{{ url_for('static', filename='sounds/error.mp3') }}"></audio>
+<audio id="interactSound" src="{{ url_for('static', filename='sounds/interact.wav') }}"></audio>
 
 <!-- Content -->
 <div class="flex-1 bg-white p-6">
@@ -338,6 +339,8 @@
 
     // Modal functions
     function openModal() {
+        const audio = document.getElementById('interactSound');
+        audio.play()
         document.getElementById('uploadModal').classList.remove('hidden');
     }
     
@@ -369,6 +372,8 @@
 
 
     function uploadFile() {
+        const audio = document.getElementById('interactSound');
+        audio.play()
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];
         var formData = new FormData();

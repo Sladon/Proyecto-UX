@@ -39,9 +39,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     load_dotenv()
     app.config.from_mapping(
-        SQLALCHEMY_DATABASE_URI=(
-            f'{MY_SQL}://{env["DB_USER"]}:{env["DB_PASSWORD"]}@'
-            f'{env["DB_HOST"]}:{env["DB_PORT"]}/{env["DB_NAME"]}'),
+        SQLALCHEMY_DATABASE_URI="sqlite:///db.db",
         SECRET_KEY=env["APP_SECRET"]
     )
 
