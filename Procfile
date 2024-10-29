@@ -1,1 +1,1 @@
-web: gunicorn 'flaskr:create_app()'
+web: sh -c 'flask --app flaskr populate-db && flask --app flaskr run'
