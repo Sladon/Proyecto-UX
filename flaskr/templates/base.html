@@ -34,6 +34,12 @@
     .upload-button:hover {
         background-color: #16a34a;
     }
+
+    button:active {
+    transform: scale(0.95) !important;
+    transition: transform 0.2s ease;
+    }
+
 </style>
 <body class="bg-[#f9f9f9]">
     <audio id="pageLoadSound" src="{{ url_for('static', filename='sounds/switch-page.mp3') }}"></audio>

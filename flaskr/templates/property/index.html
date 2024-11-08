@@ -119,6 +119,30 @@ select option[disabled] {
     transform: translateY(-1px);
     box-shadow: 0 6px 8px -1px rgba(59, 130, 246, 0.4);
 }
+
+@keyframes fadeInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-20%); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fade-in-left {
+    animation: fadeInLeft 0.5s ease-in-out; 
+}
+
+.click-animation {
+    transition: transform 1s ease; /* Suaviza la animación */
+}
+
+.click-animation:active {
+    transform: scale(0.95); /* Reduce el tamaño del botón al 95% en el clic */
+}
+
 </style>
 {% endblock %}
 
@@ -126,7 +150,7 @@ select option[disabled] {
 
 {% block content %}
 <!-- Properties -->
-<div class="flex-1 bg-white p-6">
+<div class="flex-1 bg-white p-6 fade-in-left">
     <h2 class="text-xl font-bold mb-4">Historial propiedades</h2>
     
     <!-- Formulario de búsqueda -->
