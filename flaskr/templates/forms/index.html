@@ -184,6 +184,23 @@
             transform: scale(0.95) !important;
             transition: all 0.2s ease;
         }
+
+        .cancel-button {
+            background-color: red;
+            color: white;
+            padding-left: 1%;
+            padding-right: 1%;
+            margin: 0;
+            margin-top: -4%;
+            margin-right: -1%;
+            border-radius: 100px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .cancel-button:hover {
+            background-color: rgb(222, 6, 6);
+        }
     </style>
     {% block custom_css %}{% endblock %}
 </head>
@@ -303,7 +320,7 @@
         <div class="bg-white rounded-lg w-3/4 md:w-1/2 p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold">Carga Masiva</h2>
-                <button class="text-red-500" onclick="closeModal()">X</button>
+                <button class="cancel-button" onclick="closeModal()">X</button>
             </div>
             <div class="upload-drop-zone p-8 border-2 border-dashed border-gray-300 rounded-lg text-center" id="drop-zone">
                 <p class="text-gray-600 mb-4">Arrastra tu archivo aquí o</p>
