@@ -409,9 +409,43 @@ def create_app():
         max_year = max_year if max_year else date.today().year
 
         # Handle file upload if present
-        if request.method == 'POST' and "jsonData" in request.files:
-            # Your existing file upload handling code...
-            pass
+        if request.method == 'POST':
+            if "jsonData" in request.files:
+                json_string = request.files['jsonData'].read().decode('utf-8')
+                json_data = json.loads(json_string)
+                f2890 = json_data['F2890']
+
+                malformatedFormCount = 0
+
+                for form_data in f2890:
+                    cne_id = convert_to_type(form_data.get('CNE'), int)
+                    assets = form_data.get('bienRaiz', {})
+                    commune_id = convert_to_type(assets.get('comuna'), int)
+                    block_number = convert_to_type(assets.get('manzana'), int)
+                    property_number = convert_to_type(
+                        assets.get('predio'), int)
+                    pages = convert_to_type(form_data.get('fojas'), int)
+                    inscription_date = convert_to_type(
+                        form_data.get('fechaInscripcion'), datetime)
+                    inscription_number = convert_to_type(
+                        form_data.get('nroInscripcion'), int)
+                    buyers = form_data.get('adquirentes', [])
+                    sellers = form_data.get('enajenantes', [])
+
+                    buyers = tuple(
+                        (buyer['RUNRUT'], buyer['porcDerecho']) for buyer in buyers)
+                    sellers = tuple(
+                        (seller['RUNRUT'], seller['porcDerecho']) for seller in sellers)
+
+                    try:
+                        insert_form_to_database(
+                            cne_id, commune_id, block_number, property_number, pages,
+                            inscription_date, inscription_number, buyers, sellers
+                        )
+                    except ValueError as e:
+                        print(e)
+                        db.session.rollback()
+                        malformatedFormCount += 1
 
         # Get paginated properties
         properties_data = get_properties(quantity, step, filters)
