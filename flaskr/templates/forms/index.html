@@ -265,19 +265,35 @@
             </table>
         </div>
         <div class="flex justify-between items-center">
-            <div>Mostrando {{ forms_data|length }} entradas</div>
+            <div>Mostrando {{ forms_data|length + (current_page - 1) * per_page  }} de {{ total_forms}} entradas</div>
             <div>
                 <label for="entries">Mostrar</label>
-                <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1">
-                    <option>10</option>
+                <select 
+                    id="entries" 
+                    class="border border-gray-300 bg-gray-100 rounded-md p-1"
+                    onchange="changeEntries(this.value)"
+                >
+                    {% for i in range(5, 21, 5) %}
+                        <option 
+                            value="{{ i }}" 
+                            {% if per_page|int == i or (i == 10 and per_page is none) %}selected{% endif %}
+                        >
+                            {{ i }}
+                        </option>
+                    {% endfor %}
                 </select>
                 entradas
             </div>
         </div>
-        <div class="mt-4 flex justify-end">
-            <button class="p-2">1</button>
-            <button class="p-2">2</button>
-        </div>
+        {% for page in range(1, pages_amount + 1) %}
+        <button 
+            class="p-2 rounded-md {% if page == current_page %}bg-blue-500 text-white{% else %}hover:bg-gray-100{% endif %}"
+            {% if page == current_page %}disabled{% endif %}
+            onclick="changePage({{ page }})"
+        >
+            {{ page }}
+        </button>
+        {% endfor %}
     </div>
 </div>
 
@@ -323,6 +339,50 @@
 
 {% block custom_js %}
 <script>
+
+    function changeEntries(value) {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('entries', value);
+        // Reset to first page when changing entries per page
+        urlParams.set('page', 1);
+        window.location.search = urlParams.toString();
+    }
+
+    // Optional: Set initial value on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const per_page = urlParams.get('per_page') || 10;
+        document.getElementById('entries').value = per_page;
+    });
+
+    function changePage(page) {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('page', page);
+        
+        // Preserve other parameters like per_page
+        const per_page = urlParams.get('per_page');
+        if (per_page) {
+            urlParams.set('per_page', per_page);
+        }
+        
+        window.location.search = urlParams.toString();
+    }
+
+    // Optional: Highlight current page in URL
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPage = parseInt(urlParams.get('page')) || 1;
+        
+        // Add visual indication of current page if needed
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent == currentPage) {
+                button.classList.add('bg-blue-500', 'text-white');
+            }
+        });
+    });
+
+
     // INFO json
     function showTooltip(event, element) {
         var tooltip = element.nextElementSibling;

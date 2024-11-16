@@ -60,8 +60,24 @@ def create_app():
         db.reflect()
         db.create_all()
 
-    def get_forms():
-        forms = Form.query.all()
+    def get_forms(quantity=10, step=1):
+        if quantity < 1 or quantity is None:
+            quantity = 10
+        if step < 1 or step is None:
+            step = 1
+        offset = (step - 1) * quantity
+
+        # Get total count for pagination info
+        total_forms = Form.query.count()
+
+        # Get paginated forms
+        forms = Form.query.offset(offset).limit(quantity).all()
+
+        print(f"Total forms: {total_forms}\n"
+              f"Quantity: {quantity}\n"
+              f"Step: {step}\n"
+              f"Offset: {offset}\n")
+
         forms_data = []
         for form in forms:
             form_data = {
@@ -76,10 +92,20 @@ def create_app():
                 'transactions': len(form.transactions)
             }
             forms_data.append(form_data)
-        return forms_data
+
+        return {
+            'forms': forms_data,
+            'total': total_forms,
+            'current_page': step,
+            'pages': (total_forms + quantity - 1) // quantity,  # Ceiling division for total pages
+            'per_page': quantity
+        }
 
     @app.route('/forms/create', methods=('GET', 'POST'))
     def create_form():
+        quantity = request.args.get('entries', default=10, type=int)
+        step = request.args.get('page', default=1, type=int)
+
         regions_objects = Region.query.order_by(Region.description).all()
         communes_objects = Commune.query.order_by(Commune.description).all()
         cnes_objects = Cne.query.order_by(Cne.description).all()
@@ -87,7 +113,8 @@ def create_app():
         alert_msg = MSGS["alerts"]
         missing_data = alert_msg["missing_data"]
         alerts = []
-        forms_data = get_forms()
+
+        forms_data = get_forms(quantity, step)
 
         if request.method == 'POST':
             cne_id = convert_to_type(request.form['cne'], int)
@@ -169,10 +196,16 @@ def create_app():
                     return jsonify({
                         'status': 'success',
                         'message': 'Registro Exitoso',
-                        'redirect': url_for('forms_index', attention_number=form_object.attention_number)
+                        'redirect': url_for(
+                            'forms_index',
+                            attention_number=form_object.attention_number,
+                        )
                     })
                 else:
-                    return redirect(url_for('forms_index', attention_number=form_object.attention_number))
+                    return redirect(url_for(
+                        'forms_index',
+                        attention_number=form_object.attention_number,
+                    ))
 
             return render_template(
                 'forms/index.html',
@@ -191,7 +224,11 @@ def create_app():
                 inscription_date=inscription_date.strftime('%Y-%m-%d'),
                 inscription_number=inscription_number,
                 alerts=alerts,
-                forms_data=forms_data)
+                forms_data=forms_data["forms"],
+                total_forms=forms_data["total"],
+                current_page=form_data["current_page"],
+                pages_amount=forms_data["pages"],
+                per_page=forms_data["per_page"])
 
         return render_template(
             'forms/index.html',
@@ -199,19 +236,34 @@ def create_app():
             communes=communes_objects,
             cnes=cnes_objects,
             current_date=current_date,
-            forms_data=forms_data,
+            forms_data=forms_data["forms"],
+            total_forms=forms_data["total"],
+            current_page=forms_data["current_page"],
+            pages_amount=forms_data["pages"],
+            per_page=forms_data["per_page"]
         )
 
     @app.route('/forms', defaults={'attention_number': None}, methods=['GET'])
     @app.route('/forms/<attention_number>', methods=['GET'])
     def forms_index(attention_number):
+        quantity = request.args.get('entries', default=10, type=int)
+        step = request.args.get('page', default=1, type=int)
+
+        forms_data = get_forms(quantity, step)
         template_path = path.join(app.static_folder, 'json/upload_template.json')
         with open(template_path, encoding='utf-8') as json_file:
             json_data = json.load(json_file)
 
-        forms_data = get_forms()
         if not attention_number:
-            return render_template('forms/index.html', forms_data=forms_data, json_data=json.dumps(json_data, indent=1, ensure_ascii=False),)
+            return render_template(
+                'forms/index.html',
+                forms_data=forms_data["forms"],
+                total_forms=forms_data["total"],
+                current_page=forms_data["current_page"],
+                pages_amount=forms_data["pages"],
+                per_page=forms_data["per_page"],
+                json_data=json.dumps(json_data, indent=1, ensure_ascii=False),
+            )
 
         uuid_attention_num = uuid.UUID(str(attention_number))
         form_object = Form.query.filter_by(
@@ -223,13 +275,16 @@ def create_app():
         sellers = [
             transaction for transaction in form_object.transactions
             if not transaction.is_buyer]
-
         return render_template(
             'forms/index.html',
             form_data=form_object,
             buyers=buyers,
             sellers=sellers,
-            forms_data=forms_data,
+            forms_data=forms_data["forms"],
+            total_forms=forms_data["total"],
+            current_page=forms_data["current_page"],
+            pages_amount=forms_data["pages"],
+            per_page=forms_data["per_page"]
         )
 
     @app.route('/api/v1/regions/all', methods=['GET'])
