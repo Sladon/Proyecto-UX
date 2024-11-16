@@ -141,7 +141,7 @@ select option[disabled] {
                         {% if region.id == region_id %}
                             <option value="{{ region.id }}" selected>{{ region.description }}</option>
                         {% else %}
-                            <option id="regionOption" value="{{ region.id }}">{{ region.description }}</option>
+                            <option value="{{ region.id }}">{{ region.description }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
@@ -151,7 +151,7 @@ select option[disabled] {
             <div>
                 <label for="comuna" class="block text-sm font-medium text-gray-700 mb-1">Comuna:</label>
                 <select id="comuna" name="comuna" class="form-control mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="loadRegions(this.value)">
-                    <option id="communeOption" value="">Selecciona una comuna</option>
+                    <option value="">Selecciona una comuna</option>
                     {% for commune in communes %}
                         {% if commune.id == commune_id %}
                             <option value="{{ commune.id }}" selected>{{ commune.description }}</option>
@@ -197,8 +197,6 @@ select option[disabled] {
             </div>
         </div>
     </form>
-
-    <audio id="searchSound" src="{{ url_for('static', filename='sounds/search.wav') }}"></audio>
 
     <!-- Tabla de resultados -->
     <div class="bg-white rounded-lg shadow-md p-4">
@@ -261,41 +259,33 @@ select option[disabled] {
     </div>
 </div>
 
-<audio id="dropdownSound" src="{{ url_for('static', filename='sounds/dropdown.mp3') }}"></audio> 
-<audio id="hoverSound" src="{{ url_for('static', filename='sounds/hover.wav') }}"></audio> 
-
 <script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
 
 <script>
     document.getElementById('searchForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        const audio = document.getElementById('searchSound');
         const form = this;
-        
-        audio.play();
+        playSound('search');
         
         setTimeout(function() {
             form.submit();
         }, 1000);
     });
-
-    const dropdownAudio = document.getElementById('dropdownSound');
-    const hoverAudio = document.getElementById('hoverSound');
         
     const regionSelect = document.getElementById('region');
     const communeSelect = document.getElementById('comuna');
     const yearSelect = document.getElementById('anio');
 
     regionSelect.addEventListener('click', function() {
-    dropdownAudio.play()
+    playSound('dropdown');
     });
 
     communeSelect.addEventListener('click', function() {
-    dropdownAudio.play()
+    playSound('dropdown');
     });
 
     yearSelect.addEventListener('click', function() {
-    dropdownAudio.play()
+    playSound('dropdown');
     });
 
 

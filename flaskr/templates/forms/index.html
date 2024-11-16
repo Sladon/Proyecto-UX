@@ -164,6 +164,10 @@
         padding: 12px;
     }
 
+    .table-misc {
+        border-color: black
+    }
+
     .upload-drop-zone {
         border: 2px dashed #007bff;
         border-radius: 5px;
@@ -195,10 +199,6 @@
 {% endblock %}
 
 {% block content %}
-<audio id="successSound" src="{{ url_for('static', filename='sounds/success.mp3') }}"></audio>
-<audio id="errorSound" src="{{ url_for('static', filename='sounds/error.mp3') }}"></audio>
-<audio id="interactSound" src="{{ url_for('static', filename='sounds/interact.wav') }}"></audio>
-
 <!-- Content -->
 <div class="flex-1 bg-white p-6">
     <h2 class="text-xl font-bold mb-4">Formularios Ingresados</h2>
@@ -211,8 +211,8 @@
                 <button class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300" onclick="openModal()">
                     <i class="fa-solid fa-upload mr-2"></i>Carga Masiva
                 </button>
-                <span class="info-icon ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-blue-600 hover:bg-blue-100 transition duration-300 cursor-pointer" 
-                onmouseover="showTooltip(event, this)" 
+                <span class="info-icon ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-blue-600 hover:bg-blue-100 transition duration-300 cursor-pointer"
+                onmouseover="showTooltip(event, this)"
                 onmouseout="hideTooltip(this)">
                     <i class="fas fa-info text-xs"></i>
                 </span>
@@ -339,27 +339,26 @@
 
     // Modal functions
     function openModal() {
-        const audio = document.getElementById('interactSound');
-        audio.play()
+        playSound('interact');
         document.getElementById('uploadModal').classList.remove('hidden');
     }
-    
+
     function closeModal() {
+        playSound('interact');
         document.getElementById('uploadModal').classList.add('hidden');
     }
-    
-    function playSound(isSuccess) {
-        const sound = isSuccess ? document.getElementById('successSound') : document.getElementById('errorSound');
-        sound.currentTime = 0;
-        sound.play().catch(error => console.error('Error playing sound:', error));
+
+    function notificationSound(isSuccess) {
+        const sound = isSuccess ? "success": "error";
+        playSound(sound);
     }
 
     function showNotification(message, isSuccess) {
         const notification = document.getElementById('notification');
         notification.textContent = message;
         notification.className = `fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`;
-        
-        playSound(isSuccess);
+
+        notificationSound(isSuccess);
 
         setTimeout(() => {
             notification.style.transform = 'translateY(0)';
@@ -372,24 +371,23 @@
 
 
     function uploadFile() {
-        const audio = document.getElementById('interactSound');
-        audio.play()
+        playSound('interact');
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];
         var formData = new FormData();
         formData.append('jsonData', file);
 
         document.getElementById('loadingAnimation').classList.remove('hidden');
-        
+
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/', true);
         xhr.onload = function() {
             document.getElementById('loadingAnimation').classList.add('hidden');
-            
+
             if (xhr.status === 200) {
                 console.log('Archivo subido correctamente. El JSON es válido.');
                 showNotification('Archivo subido correctamente. El JSON es válido.', true);
-                
+
                 setTimeout(function() {
                     location.reload();
                 }, 2000);
