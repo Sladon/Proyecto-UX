@@ -1,0 +1,93 @@
+/* Cursor personalizado global */
+* {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Asegurar que elementos interactivos mantengan el cursor */
+button,
+select,
+input,
+a,
+label,
+textarea,
+[role="button"],
+[type="button"],
+[type="submit"],
+[type="reset"],
+.cursor-pointer,
+.clickable {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Estados específicos */
+*:hover,
+*:active,
+*:focus {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Sobreescribir cursores específicos */
+*[disabled],
+.disabled {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Mantener el cursor en elementos de formulario */
+input[type="text"]:hover,
+input[type="text"]:focus,
+select:hover,
+select:focus,
+textarea:hover,
+textarea:focus {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Estilos base para select y sus componentes */
+select,
+select *,
+select option,
+select optgroup,
+.form-control,
+.form-select,
+select::-ms-expand {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Específicamente para el elemento select en diferentes estados */
+select:hover,
+select:focus,
+select:active,
+select::-ms-expand {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Para navegadores webkit (Chrome, Safari, etc.) */
+select::-webkit-dropdown-button,
+select::-webkit-list-button,
+select::-webkit-calendar-picker-indicator {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Para Firefox */
+select:-moz-focusring {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Para cuando el select está abierto */
+select[aria-expanded="true"],
+select[open] {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
+
+/* Para elementos con clases específicas de Tailwind */
+.form-control,
+.mt-1,
+.block,
+.w-full,
+.rounded-md,
+.border-gray-300,
+.focus\:outline-none,
+.focus\:ring-indigo-500,
+.focus\:border-indigo-500 {
+    cursor: url('/static/images/pen_cursor.png'), auto !important;
+}
