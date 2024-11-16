@@ -173,7 +173,7 @@
     document
         .getElementById("close-modal")
         .addEventListener("click", function () {
-            window.location.href = "{{ url_for('forms_index') }}"; // Redirige a forms_index
+            window.location.href = "{{ url_for('forms_index', **request.args.to_dict()) }}"; // Redirige a forms_index
         });
 
     // Validación en tiempo real
@@ -182,7 +182,7 @@
         .addEventListener("submit", function (e) {
             e.preventDefault();
 
-            fetch('{{ url_for("create_form") }}', {
+            fetch('{{ url_for("create_form", **request.args.to_dict()) }}', {
                 method: "POST",
                 body: new FormData(this),
                 headers: {
