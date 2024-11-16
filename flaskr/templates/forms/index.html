@@ -204,10 +204,7 @@
     <h2 class="text-xl font-bold mb-4">Formularios Ingresados</h2>
     <div class="flex justify-between mb-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-2/3">
-            <a 
-                href="{{ url_for('create_form', **request.args.to_dict()) }}" 
-                class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-300"
-            >
+            <a href="{{ url_for('create_form') }}" class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-300">
                 <i class="fa-solid fa-plus mr-2"></i>Agregar Formulario
             </a>
             <div class="relative inline-block">
@@ -229,7 +226,7 @@
 
     <!-- Table -->
     <div class="bg-white rounded-lg shadow-md p-4">
-        <div class="table-responsive"></div>
+        <div class="table-responsive">
             <table class="w-full table-auto mb-4">
                 <thead>
                     <tr>
@@ -268,15 +265,17 @@
             </table>
         </div>
         <div class="flex justify-between items-center">
-            <div>Mostrando {{ forms_data|length + (current_page - 1) * per_page  }} de {{ total_forms}} entradas</div>
-            <div>
-                <label for="entries">Mostrar</label>
+            <div class="text-sm text-gray-600">
+                Mostrando {{ forms_data|length + (current_page-1) * per_page }} de {{ total_forms }} entradas
+            </div>
+            <div class="flex items-center space-x-2">
+                <label for="entries" class="text-sm text-gray-600">Mostrar</label>
                 <select 
                     id="entries" 
                     class="border border-gray-300 bg-gray-100 rounded-md p-1"
                     onchange="changeEntries(this.value)"
                 >
-                    {% for i in range(5, 21, 5) %}
+                    {% for i in range(5, 16, 5) %}
                         <option 
                             value="{{ i }}" 
                             {% if per_page|int == i or (i == 10 and per_page is none) %}selected{% endif %}
@@ -285,21 +284,85 @@
                         </option>
                     {% endfor %}
                 </select>
-                entradas
+                <span class="text-sm text-gray-600">entradas</span>
             </div>
         </div>
-        {% for page in range(1, pages_amount + 1) %}
+    </div>
+    <div class="mt-4 flex justify-end items-center gap-1">
+        <!-- Previous button -->
         <button 
-            class="p-2 rounded-md {% if page == current_page %}bg-blue-500 text-white{% else %}hover:bg-gray-100{% endif %}"
-            {% if page == current_page %}disabled{% endif %}
-            onclick="changePage({{ page }})"
+            class="px-3 py-1 rounded-md {% if current_page == 1 %}bg-gray-100 text-gray-400 cursor-not-allowed{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+            onclick="changePage({{ current_page - 1 }})"
+            {% if current_page == 1 %}disabled{% endif %}
         >
-            {{ page }}
+            Anterior
         </button>
-        {% endfor %}
+
+        {% if pages_amount > 7 %}
+            <!-- First page -->
+            <button 
+                class="px-3 py-1 rounded-md {% if current_page == 1 %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+                onclick="changePage(1)"
+            >
+                1
+            </button>
+
+            {% if current_page > 3 %}
+                <span class="px-2 text-gray-500">...</span>
+            {% endif %}
+
+            <!-- Calculate page range -->
+            {% set start_page = 2 if current_page <= 3 else current_page - 1 %}
+            {% set end_page = pages_amount - 1 if current_page >= pages_amount - 2 else current_page + 1 %}
+            
+            {% for page in range(start_page, end_page + 1) %}
+                {% if page != 1 and page != pages_amount %}
+                    <button 
+                        class="px-3 py-1 rounded-md {% if page == current_page %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+                        onclick="changePage({{ page }})"
+                        {% if page == current_page %}disabled{% endif %}
+                    >
+                        {{ page }}
+                    </button>
+                {% endif %}
+            {% endfor %}
+
+            {% if current_page < pages_amount - 2 %}
+                <span class="px-2 text-gray-500">...</span>
+            {% endif %}
+
+            <!-- Last page -->
+            {% if pages_amount > 1 %}
+                <button 
+                    class="px-3 py-1 rounded-md {% if pages_amount == current_page %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+                    onclick="changePage({{ pages_amount }})"
+                    {% if pages_amount == current_page %}disabled{% endif %}
+                >
+                    {{ pages_amount }}
+                </button>
+            {% endif %}
+        {% else %}
+            {% for page in range(1, pages_amount + 1) %}
+                <button 
+                    class="px-3 py-1 rounded-md {% if page == current_page %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+                    onclick="changePage({{ page }})"
+                    {% if page == current_page %}disabled{% endif %}
+                >
+                    {{ page }}
+                </button>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Next button -->
+        <button 
+            class="px-3 py-1 rounded-md {% if current_page == pages_amount %}bg-gray-100 text-gray-400 cursor-not-allowed{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+            onclick="changePage({{ current_page + 1 }})"
+            {% if current_page == pages_amount %}disabled{% endif %}
+        >
+            Siguiente
+        </button>
     </div>
 </div>
-
 <!-- Upload Modal -->
 <div id="uploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
     <div class="bg-white rounded-lg w-3/4 md:w-1/2 p-6">
@@ -342,129 +405,107 @@
 
 {% block custom_js %}
 <script>
+function changeEntries(value) {
+    playSound('interact');
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('per_page', value);
+    urlParams.set('page', '1');
+    window.location.search = urlParams.toString();
+}
 
-    function changeEntries(value) {
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.set('entries', value);
-        // Reset to first page when changing entries per page
-        urlParams.set('page', 1);
-        window.location.search = urlParams.toString();
-    }
+function changePage(page) {
+    playSound('interact');
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page);
+    window.location.search = urlParams.toString();
+}
 
-    // Optional: Set initial value on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const per_page = urlParams.get('per_page') || 10;
-        document.getElementById('entries').value = per_page;
-    });
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const per_page = urlParams.get('per_page') || '10';
+    document.getElementById('entries').value = per_page;
+});
 
-    function changePage(page) {
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.set('page', page);
-        
-        // Preserve other parameters like per_page
-        const per_page = urlParams.get('per_page');
-        if (per_page) {
-            urlParams.set('per_page', per_page);
+// INFO json
+function showTooltip(event, element) {
+    var tooltip = element.nextElementSibling;
+    tooltip.classList.remove('hidden');
+    tooltip.classList.add('show');
+}
+
+function hideTooltip(element) {
+    var tooltip = element.nextElementSibling;
+    tooltip.classList.remove('show');
+    tooltip.classList.add('hidden');
+}
+
+
+// Modal functions
+function openModal() {
+    playSound('interact');
+    document.getElementById('uploadModal').classList.remove('hidden');
+}
+
+function closeModal() {
+    playSound('interact');
+    document.getElementById('uploadModal').classList.add('hidden');
+}
+
+function notificationSound(isSuccess) {
+    const sound = isSuccess ? "success": "error";
+    playSound(sound);
+}
+
+function showNotification(message, isSuccess) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`;
+
+    notificationSound(isSuccess);
+
+    setTimeout(() => {
+        notification.style.transform = 'translateY(0)';
+    }, 100);
+
+    setTimeout(() => {
+        notification.style.transform = 'translateY(-100%)';
+    }, 3000);
+}
+
+
+function uploadFile() {
+    playSound('interact');
+    var fileInput = document.getElementById('fileInput');
+    var file = fileInput.files[0];
+    var formData = new FormData();
+    formData.append('jsonData', file);
+
+    document.getElementById('loadingAnimation').classList.remove('hidden');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/', true);
+    xhr.onload = function() {
+        document.getElementById('loadingAnimation').classList.add('hidden');
+
+        if (xhr.status === 200) {
+            console.log('Archivo subido correctamente. El JSON es válido.');
+            showNotification('Archivo subido correctamente. El JSON es válido.', true);
+
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        } else {
+            console.error('Error: El archivo subido no es válido o tiene un formato incorrecto.');
+            showNotification('Error: El archivo subido no es válido o tiene un formato incorrecto.', false);
         }
-        
-        window.location.search = urlParams.toString();
-    }
-
-    // Optional: Highlight current page in URL
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentPage = parseInt(urlParams.get('page')) || 1;
-        
-        // Add visual indication of current page if needed
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent == currentPage) {
-                button.classList.add('bg-blue-500', 'text-white');
-            }
-        });
-    });
-
-
-    // INFO json
-    function showTooltip(event, element) {
-        var tooltip = element.nextElementSibling;
-        tooltip.classList.remove('hidden');
-        tooltip.classList.add('show');
-    }
-
-    function hideTooltip(element) {
-        var tooltip = element.nextElementSibling;
-        tooltip.classList.remove('show');
-        tooltip.classList.add('hidden');
-    }
-
-
-    // Modal functions
-    function openModal() {
-        playSound('interact');
-        document.getElementById('uploadModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-        playSound('interact');
-        document.getElementById('uploadModal').classList.add('hidden');
-    }
-
-    function notificationSound(isSuccess) {
-        const sound = isSuccess ? "success": "error";
-        playSound(sound);
-    }
-
-    function showNotification(message, isSuccess) {
-        const notification = document.getElementById('notification');
-        notification.textContent = message;
-        notification.className = `fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`;
-
-        notificationSound(isSuccess);
-
-        setTimeout(() => {
-            notification.style.transform = 'translateY(0)';
-        }, 100);
-
-        setTimeout(() => {
-            notification.style.transform = 'translateY(-100%)';
-        }, 3000);
-    }
-
-
-    function uploadFile() {
-        playSound('interact');
-        var fileInput = document.getElementById('fileInput');
-        var file = fileInput.files[0];
-        var formData = new FormData();
-        formData.append('jsonData', file);
-
-        document.getElementById('loadingAnimation').classList.remove('hidden');
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/', true);
-        xhr.onload = function() {
-            document.getElementById('loadingAnimation').classList.add('hidden');
-
-            if (xhr.status === 200) {
-                console.log('Archivo subido correctamente. El JSON es válido.');
-                showNotification('Archivo subido correctamente. El JSON es válido.', true);
-
-                setTimeout(function() {
-                    location.reload();
-                }, 2000);
-            } else {
-                console.error('Error: El archivo subido no es válido o tiene un formato incorrecto.');
-                showNotification('Error: El archivo subido no es válido o tiene un formato incorrecto.', false);
-            }
-        };
-        xhr.onerror = function() {
-            document.getElementById('loadingAnimation').classList.add('hidden');
-            console.error('Error de red al intentar subir el archivo');
-            showNotification('Error de red al intentar subir el archivo', false);
-        };
-        xhr.send(formData);
-    }
+    };
+    xhr.onerror = function() {
+        document.getElementById('loadingAnimation').classList.add('hidden');
+        console.error('Error de red al intentar subir el archivo');
+        showNotification('Error de red al intentar subir el archivo', false);
+    };
+    xhr.send(formData);
+}
 </script>
 {% endblock %}

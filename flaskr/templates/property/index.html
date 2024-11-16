@@ -240,53 +240,171 @@ select option[disabled] {
         <!-- Controles de paginación -->
         <div class="flex justify-between items-center mt-4">
             <div class="text-sm text-gray-600">
-                Mostrando {{ multi_properties | length }} entradas
+                Mostrando {{ multi_properties|length + (current_page-1) * per_page }} de {{ total_properties }} entradas
             </div>
             <div class="flex items-center space-x-2">
                 <label for="entries" class="text-sm text-gray-600">Mostrar</label>
-                <select id="entries" class="border border-gray-300 bg-gray-100 rounded-md p-1 text-sm">
-                    <option>10</option>
+                <select 
+                    id="entries" 
+                    class="border border-gray-300 bg-gray-100 rounded-md p-1 text-sm"
+                    onchange="changeEntries(this.value)"
+                >
+                    {% for i in range(5, 16, 5) %}
+                        <option 
+                            value="{{ i }}" 
+                            {% if per_page|int == i or (i == 10 and per_page is none) %}selected{% endif %}
+                        >
+                            {{ i }}
+                        </option>
+                    {% endfor %}
                 </select>
                 <span class="text-sm text-gray-600">entradas</span>
             </div>
         </div>
         
-        <!-- Números de página -->
-        <div class="mt-4 flex justify-end space-x-2">
-            <button class="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700">1</button>
-            <button class="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700">2</button>
-        </div>
-    </div>
+        <!-- Pagination buttons -->
+<div class="mt-4 flex justify-end items-center gap-1">
+    <!-- Previous button -->
+    <button 
+        class="px-3 py-1 rounded-md {% if current_page == 1 %}bg-gray-100 text-gray-400 cursor-not-allowed{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+        onclick="changePage({{ current_page - 1 }})"
+        {% if current_page == 1 %}disabled{% endif %}
+    >
+        Anterior
+    </button>
+
+    {% if pages_amount > 7 %}
+        <!-- First page -->
+        <button 
+            class="px-3 py-1 rounded-md {% if current_page == 1 %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+            onclick="changePage(1)"
+            {% if current_page == 1 %}disabled{% endif %}
+        >
+            1
+        </button>
+
+        {% if current_page > 3 %}
+            <span class="px-2 text-gray-500">...</span>
+        {% endif %}
+
+        {% for page in range(max(2, current_page - 1), min(pages_amount, current_page + 2) + 1) %}
+            {% if page != 1 and page != pages_amount %}
+                <button 
+                    class="px-3 py-1 rounded-md {% if page == current_page %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+                    onclick="changePage({{ page }})"
+                    {% if page == current_page %}disabled{% endif %}
+                >
+                    {{ page }}
+                </button>
+            {% endif %}
+        {% endfor %}
+
+        {% if current_page < pages_amount - 2 %}
+            <span class="px-2 text-gray-500">...</span>
+        {% endif %}
+
+        <!-- Last page -->
+        {% if pages_amount > 1 %}
+            <button 
+                class="px-3 py-1 rounded-md {% if pages_amount == current_page %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+                onclick="changePage({{ pages_amount }})"
+                {% if pages_amount == current_page %}disabled{% endif %}
+            >
+                {{ pages_amount }}
+            </button>
+        {% endif %}
+    {% else %}
+        {% for page in range(1, pages_amount + 1) %}
+            <button 
+                class="px-3 py-1 rounded-md {% if page == current_page %}bg-blue-500 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+                onclick="changePage({{ page }})"
+                {% if page == current_page %}disabled{% endif %}
+            >
+                {{ page }}
+            </button>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Next button -->
+    <button 
+        class="px-3 py-1 rounded-md {% if current_page == pages_amount %}bg-gray-100 text-gray-400 cursor-not-allowed{% else %}bg-gray-100 hover:bg-gray-200 text-gray-700{% endif %}"
+        onclick="changePage({{ current_page + 1 }})"
+        {% if current_page == pages_amount %}disabled{% endif %}
+    >
+        Siguiente
+    </button>
 </div>
 
 <script src="{{ url_for('static', filename='js/helpers/general.js') }}"></script>
 
 <script>
-    document.getElementById('searchForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const form = this;
-        playSound('search');
-        
-        setTimeout(function() {
-            form.submit();
-        }, 1000);
-    });
-        
-    const regionSelect = document.getElementById('region');
-    const communeSelect = document.getElementById('comuna');
-    const yearSelect = document.getElementById('anio');
+function changeEntries(value) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('per_page', value);
+    urlParams.set('page', '1');
+    
+    // Preserve existing search parameters
+    const form = document.getElementById('searchForm');
+    const formData = new FormData(form);
+    for (let pair of formData.entries()) {
+        if (pair[1]) {
+            urlParams.set(pair[0], pair[1]);
+        }
+    }
+    
+    playSound('interact');
+    window.location.search = urlParams.toString();
+}
 
-    regionSelect.addEventListener('click', function() {
-    playSound('dropdown');
-    });
+function changePage(page) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page);
+    
+    // Preserve existing search parameters
+    const form = document.getElementById('searchForm');
+    const formData = new FormData(form);
+    for (let pair of formData.entries()) {
+        if (pair[1]) {
+            urlParams.set(pair[0], pair[1]);
+        }
+    }
+    
+    playSound('interact');
+    window.location.search = urlParams.toString();
+}
 
-    communeSelect.addEventListener('click', function() {
-    playSound('dropdown');
-    });
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const per_page = urlParams.get('per_page') || '10';
+    document.getElementById('entries').value = per_page;
+});
 
-    yearSelect.addEventListener('click', function() {
-    playSound('dropdown');
-    });
+document.getElementById('searchForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const form = this;
+    playSound('search');
+    
+    setTimeout(function() {
+        form.submit();
+    }, 1000);
+});
+    
+const regionSelect = document.getElementById('region');
+const communeSelect = document.getElementById('comuna');
+const yearSelect = document.getElementById('anio');
+
+regionSelect.addEventListener('click', function() {
+playSound('dropdown');
+});
+
+communeSelect.addEventListener('click', function() {
+playSound('dropdown');
+});
+
+yearSelect.addEventListener('click', function() {
+playSound('dropdown');
+});
 
 
 </script>
