@@ -115,12 +115,15 @@ function addSellerBuyerElement(containerClass, rutValue = '', shareValue = '') {
   label.classList.add("text-white");
 
   const divButton = document.createElement("button");
-  divButton.classList.add('remove', 'btn', 'btn-danger');
   divButton.textContent = 'Quitar';
   divButton.type = "button";
+  divButton.classList.add("remove-button");
   divButton.addEventListener("click", function(ev) { removePerson(ev.target); });
+  const hrline = document.createElement("hr");
+  hrline.classList.add("remove-line");
   divButtonWrapper.appendChild(label);
   divButtonWrapper.appendChild(divButton);
+  divButtonWrapper.appendChild(hrline);
 
   const feedback = document.createElement("div");
   feedback.classList.add("invalid-feedback");
