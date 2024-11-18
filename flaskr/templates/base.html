@@ -132,13 +132,9 @@
             <div class="animation-scene" id="animation-scene"></div>
         </div>
 
-        <div
-            id="notification"
-            class="fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out translate-y-[-100%]"
-        ></div>
-        <div class="md:flex h-100">
+        <div class="md:flex min-h-screen relative">
             <!-- Sidebar -->
-            <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block">
+            <div class="w-64 bg-[#598dc6] p-4 text-white hidden md:block min-h-screen fixed">
                 <div class="mb-8">
                     <div class="text-4xl font-bold">GBR</div>
                     <div class="text-l" style="margin-bottom: 10px">
@@ -167,8 +163,15 @@
                 <i class="fa-solid fa-bars"></i>
             </button>
 
-            {% block content %}{% endblock %}
+            <div class="md:ml-64 w-full">
+                <!-- Aquí va todo tu contenido actual -->
+                {% block content %}{% endblock %}
+            </div>
         </div>
+        <div
+            id="notification"
+            class="fixed top-0 left-0 right-0 p-4 text-white text-center transform transition-transform duration-300 ease-in-out translate-y-[-100%]"
+        ></div>
 
         {% block custom_js %}{% endblock %}
         <script src="{{ url_for('static', filename='js/helpers/audio.js') }}"></script>
