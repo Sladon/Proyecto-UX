@@ -376,7 +376,9 @@ function changeEntries(value) {
     }
     
     playSound('interact');
-    window.location.search = urlParams.toString();
+    setTimeout(() => {
+        window.location.search = urlParams.toString();
+    }, 500)
 }
 
 function changePage(page) {
@@ -393,7 +395,9 @@ function changePage(page) {
     }
     
     playSound('interact');
-    window.location.search = urlParams.toString();
+    setTimeout(() => {
+        window.location.search = urlParams.toString();
+    }, 500)
 }
 
 // Initialize on page load
