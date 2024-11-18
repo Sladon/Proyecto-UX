@@ -29,6 +29,10 @@ const audios = {
     audio: new Audio(MP3_DIR + "switch-page.mp3"),
     volume: 1,
   },
+  inicio: {
+    audio: new Audio(MP3_DIR + "Inicio.mp3"),
+    volume: 1,
+  },
 };
 
 Object.values(audios).forEach(({ audio, volume }) => {

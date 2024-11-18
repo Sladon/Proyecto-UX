@@ -287,6 +287,16 @@
                         return;
                     }
 
+                    // Wait for user interaction before playing sound
+                    function playIntroSound() {
+                        playSound('inicio');
+                        document.removeEventListener('click', playIntroSound);
+                        document.removeEventListener('touchstart', playIntroSound);
+                    }
+
+                    document.addEventListener('click', playIntroSound);
+                    document.addEventListener('touchstart', playIntroSound);
+
                     const animationContainer = document.getElementById('intro-animation');
                     const scene = document.getElementById('animation-scene');
                     
