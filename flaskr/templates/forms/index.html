@@ -323,7 +323,7 @@
                     class="border border-gray-300 bg-gray-100 rounded-md p-1"
                     onchange="changeEntries(this.value)"
                 >
-                    {% for i in range(5, 16, 5) %}
+                    {% for i in range(5, 21, 5) %}
                         <option 
                             value="{{ i }}" 
                             {% if per_page|int == i or (i == 10 and per_page is none) %}selected{% endif %}
@@ -455,17 +455,21 @@
 <script>
 function changeEntries(value) {
     playSound('interact');
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('per_page', value);
-    urlParams.set('page', '1');
-    window.location.search = urlParams.toString();
+    setTimeout(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('per_page', value);
+        urlParams.set('page', '1');
+        window.location.search = urlParams.toString();
+    }, 500)
 }
 
 function changePage(page) {
     playSound('interact');
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('page', page);
-    window.location.search = urlParams.toString();
+    setTimeout(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('page', page);
+        window.location.search = urlParams.toString();
+    }, 500)
 }
 
 // Initialize on page load

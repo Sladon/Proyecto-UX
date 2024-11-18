@@ -272,7 +272,7 @@ select option[disabled] {
                     class="border border-gray-300 bg-gray-100 rounded-md p-1 text-sm"
                     onchange="changeEntries(this.value)"
                 >
-                    {% for i in range(5, 11, 5) %}
+                    {% for i in range(5, 21, 5) %}
                         <option 
                             value="{{ i }}" 
                             {% if per_page|int == i or (i == 10 and per_page is none) %}selected{% endif %}
