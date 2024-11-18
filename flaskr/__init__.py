@@ -77,6 +77,7 @@ def create_app():
                 Property.block).join(Block.commune).join(Commune.region)
 
         # Apply filters if any
+        print(filters)
         if filters:
             if filters.get('region_id'):
                 query = query.filter(Region.id == filters['region_id'])
@@ -395,6 +396,7 @@ def create_app():
             'property_number': request.form.get('property', type=int),
             'year': request.form.get('year', type=int)
         }
+        print(1, filters)
 
         # Get min/max years
         base_query = MultiProperty.query.join(
