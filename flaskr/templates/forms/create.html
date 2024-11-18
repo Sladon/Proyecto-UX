@@ -251,5 +251,28 @@
                     showNotification("Error al procesar la solicitud", "error");
                 });
         });
+
+    function toggleEnajenantesSection() {
+        var cneSelect = document.getElementById('cne');
+        var cneId = cneSelect.value;
+        var enajenantesSection = document.querySelector('#enajAdqForm div > div:nth-child(1)');
+        var addEnajButton = document.getElementById('addEnaj');
+
+        if (cneId === '99') {
+            enajenantesSection.style.display = 'none';
+            addEnajButton.disabled = true;
+        } else {
+            enajenantesSection.style.display = '';
+            addEnajButton.disabled = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleEnajenantesSection();
+    });
+
+    document.getElementById('cne').addEventListener('change', function() {
+        toggleEnajenantesSection();
+    });
 </script>
 {% endblock %}
