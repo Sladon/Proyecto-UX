@@ -248,7 +248,7 @@ select option[disabled] {
                         <td class="px-4 py-2 border">{{ multi_property.property.block.commune.description }}</td>
                         <td class="px-4 py-2 border">{{ multi_property.property.block.commune.region.description }}</td>
                         <td class="px-4 py-2 border">{{ multi_property.person.run }}</td>
-                        <td class="px-4 py-2 border">{{ multi_property.percentage if multi_property.percentage is not none else 'N/A' }}</td>
+                        <td class="px-4 py-2 border">{{ round(multi_property.percentage, 2) if multi_property.percentage is not none else 'N/A' }}</td>
                         <td class="px-4 py-2 border">{{ multi_property.pages }}</td>
                         <td class="px-4 py-2 border">{{ multi_property.inscription_date }}</td>
                         <td class="px-4 py-2 border">{{ multi_property.inscription_number }}</td>

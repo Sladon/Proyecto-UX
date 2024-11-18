@@ -45,6 +45,7 @@ def create_app():
 
     app.jinja_env.globals.update(max=max)
     app.jinja_env.globals.update(min=min)
+    app.jinja_env.globals.update(round=round)
 
     if env["FLASK_ENV"] == 'development':
         app.jinja_env.auto_reload = True
